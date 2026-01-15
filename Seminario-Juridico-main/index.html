@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Seminario Laboral 2025</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Fuente Poppins opcional (mejor rendimiento si ya cacheada) -->
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"> -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+</head>
+
+<body>
+
+  <!-- Encabezado -->
+  <header class="top-bar">
+    <div class="container">
+      <img src="img/logo.png" alt="logo">
+      <span>PBX : 3142033549 - 3203620097 - 3174745153</span>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p>Seminario práctico para empresarios</p>
+      <h1>
+        Cómo implementar las <span>nuevas normativas laborales 2025</span>
+      </h1>
+
+      <ul class="hero-benefits">
+        <li>Actualice el reglamento interno de la empresa con las normas de la Reforma Laboral y los nuevos decretos y
+          circulares obligatorias expedidas por el Ministerio de Trabajo para su validez legal</li>
+        <li>Conozca los 25 aspectos que el Ministerio de Trabajo verifica en sus visitas de inspección y control en todo
+          el país, en su rol de Policía laboral</li>
+        <li>¿Conoce los 72 puntos obligatorios que, de acuerdo a la Reforma Laboral, conceptos del Ministerio de Trabajo
+          y la jurisprudencia, debe tener todo reglamento interno de trabajo?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Tarjeta con Formulario -->
+  <section>
+    <div class="container form-shell">
+      <div class="left">
+        <!--
+      <div class="content">
+        <h1>Centro Jurídico <span>Internacional</span></h1>
+        <p>Inscríbete ahora y accede a nuestros cursos y servicios. Pago seguro con PayU (sandbox).</p>
+      </div>
+      -->
+        <div class="dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <div class="right">
+        <h2>Inscríbase ya</h2>
+        <p class="sub">Déjanos tus datos y te contactaremos</p>
+
+        <!-- NUEVO FORMULARIO (tal cual) -->
+        <form id="formulario" autocomplete="off">
+          <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre completo" required>
+
+          <input type="email" id="correo" name="correo" placeholder="Ingrese su correo electrónico" required>
+          <input type="email" id="confirmarCorreo" name="confirmarCorreo" placeholder="Confirme su correo electrónico"
+            required onpaste="return false;" ondrop="return false;" autocomplete="off">
+
+          <input type="tel" id="telefono" name="telefono" placeholder="Ingrese su número de celular" required>
+
+          <select id="tipoPersona" name="tipoPersona" required>
+            <option value="" disabled selected>Seleccione tipo de cliente</option>
+            <option value="natural">Persona natural</option>
+            <option value="empresa">Empresa</option>
+          </select>
+
+          <!-- Oculto de inicio; el JS controla visibilidad y required -->
+          <div id="campoEmpresa" class="hidden" aria-hidden="true">
+            <input type="text" id="empresa" name="empresa" placeholder="Ingrese el nombre de su empresa">
+          </div>
+
+          <div id="campoUbicacion">
+            <select id="ubicacion" name="ubicacion" required>
+              <option value="" disabled selected>Seleccione ubicación</option>
+              <option value="bogota">Bogotá</option>
+              <option value="fuera">Fuera de Bogotá</option>
+            </select>
+          </div>
+
+          <p id="precio" class="precio"></p>
+          <input type="hidden" id="vendedor" name="vendedor" value="sin_vendedor">
+
+          <div class="checkbox">
+            <input type="checkbox" id="politica" name="politica" required>
+            <label for="politica">Acepto la <a href="#" target="_blank" rel="noopener">política de
+                privacidad</a></label>
+          </div>
+
+          <!-- Honeypot field for security -->
+          <div style="display:none; opacity:0; position:absolute; left:-9999px;">
+            <input type="text" id="website_honeypot" name="website_honeypot" tabindex="-1" autocomplete="off">
+          </div>
+
+          <button type="button" id="btnPayu">Pagar con PayU (Sandbox)</button>
+        </form>
+
+
+
+        <!-- Formulario oculto que se enviará al gateway de PayU -->
+        <form id="formPayu" method="POST" action="https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/"
+          style="display:none;">
+          <input name="merchantId" type="hidden" value="" />
+          <input name="accountId" type="hidden" value="" />
+          <input name="description" type="hidden" value="Pago de formulario CJI" />
+          <input name="referenceCode" type="hidden" id="referenceCode" value="" />
+          <input name="amount" type="hidden" id="amount" value="" />
+          <input name="tax" type="hidden" value="0" />
+          <input name="taxReturnBase" type="hidden" value="0" />
+          <input name="currency" type="hidden" value="COP" />
+          <input name="signature" type="hidden" id="signature" value="" />
+          <input name="buyerEmail" type="hidden" id="buyerEmail" value="" />
+          <input name="extra1" type="hidden" id="extra1" value="" />
+          <input name="extra2" type="hidden" id="extra2" value="" />
+          <input name="responseUrl" type="hidden" id="responseUrl" value="" />
+          <input name="confirmationUrl" type="hidden" id="confirmationUrl" value="" />
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner SIN animación (se quitó 'promo-anim') -->
+  <section class="promocion reveal is-visible">
+    <img src="img/banner.jpeg" alt="Seminario 2025">
+  </section>
+
+  <center>
+    <h1>Qué aprenderá</h1>
+  </center>
+  <section class="contenido">
+    <div class="bloque">
+
+      <p style="text-align: justify;">En el 2025, han sido muchos aspectos que han cambiado en las relaciones entre los
+        trabajadores y su empleador, teniendo como prioridad en su compañía para el manejo de estas relaciones los
+        artículos que hacen parte de la Reforma Laboral. Hoy, el reglamento interno es el mecanismo que regula estas
+        relaciones en cuanto a productividad, horario, términos y tiempos de trabajo, uso de medios tecnológicos,
+        disciplina, abandono del cargo y buen ambiente laboral. En este seminario–taller práctico, el empresario
+        conocerá las técnicas para el desarrollo, actualización y complementación del reglamento interno de trabajo,
+        acorde con la normatividad y la jurisprudencia actual, que le permita tener un proceso disciplinario idóneo,
+        calificar el rendimiento de sus trabajadores y mejorar la convivencia laboral, conforme a las últimas
+        disposiciones legales.
+        Implemente las nuevas normas y protocolos de trabajo remoto y riesgos laborales con el límite de sus
+        responsabilidades.
+
+        En el evento, usted podrá constatar la lista de chequeo que debe cumplir su empresa para estar un paso adelante
+        en el manejo de sus relaciones laborales, junto con la integración del RIT a los demás protocolos obligatorios
+        para la empresa privada.</p>
+    </div>
+
+    <center>
+      <h1>Temario</h1>
+    </center>
+    <div class="bloque-temario">
+      <div class="temario-col">
+        <ul>
+          <li>Inclusión obligatoria del nuevo procedimiento para la atención de discriminación, acoso y violencia, en el
+            reglamento interno y su reporte ante el Ministerio de Trabajo.</li>
+          <li>Formule correctamente los procedimientos y protocolos que se deben armonizar con el Nuevo Reglamento
+            Interno de Trabajo.</li>
+          <li>Cumplimiento de los nuevos decretos del Ministerio de Trabajo y la implementación de las circulares
+            dirigidas a empleadores.</li>
+          <li>Parámetros de verificación del reglamento para el registro en el sistema integrado del Ministerio de
+            Trabajo.</li>
+          <li>Parámetros para el desarrollo de la auditoría externa del SG-SST antes de la Auto-Evaluación.</li>
+          <li>Implementación de los artículos incluidos en la Reforma Laboral.</li>
+          <li>Protocolos y reglamentos obligatorios para el departamento de talento humano.</li>
+          <li>Capacitaciones obligatorias para los trabajadores en 2025.</li>
+          <li>Incorporación de las nuevas circulares del Ministerio de Trabajo.</li>
+          <li>Implementación de la nueva legislación materna, licencias y permisos laborales.</li>
+          <li>Temas de implementación jurisprudencial obligatoria.</li>
+          <li>Prohibiciones y nuevas reglas para terminar contratos de trabajo con justa causa.</li>
+          <li>Nuevos límites del proceso disciplinario laboral y código de ética.</li>
+          <li>Capítulos del reglamento que mitigan la culpa laboral del empleador y del trabajador.</li>
+          <li>Políticas para el uso de medios tecnológicos como cámaras y mensajería instantánea.</li>
+          <li>Mecanismos probatorios del abuso del derecho en incapacidades laborales de los trabajadores.</li>
+        </ul>
+      </div>
+
+      <div class="temario-col">
+        <ul>
+          <li>Cambios y modificaciones en la contratación de funcionarios de confianza y manejo.</li>
+          <li>Criterios para la autorización o negación de solicitudes para laborar horas extras.</li>
+          <li>Implementación de nuevos criterios de prevención y protección laboral de acoso por género.</li>
+          <li>Actualización de parámetros de evaluación y productividad de trabajadores.</li>
+          <li>Protocolos de comunicación tecnológica, correos, mensajes de datos y WhatsApp.</li>
+          <li>Verificación del cumplimiento de capítulos y procesos de mitigación de acoso laboral.</li>
+          <li>Disponibilidad laboral y su efecto en sanciones de recargo suplementario.</li>
+          <li>Límites de la enfermedad e incapacidad en la estabilidad laboral reforzada.</li>
+          <li>Actualización de los 72 puntos obligatorios del Reglamento Interno de Trabajo.</li>
+          <li>Parámetros de acoso laboral automático, caducidad de la acción y periodos de estabilidad.</li>
+          <li>Disminución de jornada laboral y desmonte del día de la familia.</li>
+          <li>Contratación por prestación de servicios, trabajo en casa, remoto o por días.</li>
+          <li>Reglamentación del trabajo en casa y política de desconexión laboral.</li>
+          <li>Protocolo para solicitud de horas extras.</li>
+          <li>Suspensión del contrato laboral y su parametrización.</li>
+          <li>Procedimientos para quejas anónimas de trabajadores.</li>
+          <li>Estabilidad por incapacidad médica luego de la terminación contractual.</li>
+          <li>Régimen de licencias para trabajadores con hijos enfermos.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Inversión -->
+  <section class="inversion">
+    <h1>INVERSIÓN:</h1>
+    <p>$265.000 + IVA</p>
+  </section>
+
+  <section class="contador reveal"></section>
+
+  <!-- Video -->
+  <section class="video">
+    <div class="video-container">
+      <video controls autoplay muted loop>
+        <source src="video/video1.mp4" type="video/mp4">
+        Tu navegador no soporta videos en HTML5.
+      </video>
+    </div>
+  </section>
+  <center>
+    <h2>Nuestros Conferencistas</h2>
+  </center>
+  <section class="conferencistas">
+
+    <div class="cards-conferencistas">
+      <div class="card-conf">
+        <img src="img/conferencista1.png" alt="Conferencista 1">
+        <h3>Dr. Juan Pérez</h3>
+        <p>Abogado laboralista con más de 15 años de experiencia en derecho del trabajo. Asesor de empresas en
+          implementación de reformas laborales y políticas internas.</p>
+      </div>
+      <div class="card-conf">
+        <img src="img/conferencista2.jpeg" alt="Conferencista 2">
+        <h3>Laura Gómez</h3>
+        <p>Especialista en Seguridad Social y legislación laboral colombiana. Consultora experta en procesos de
+          formalización y bienestar organizacional.</p>
+      </div>
+      <div class="card-conf">
+        <img src="img/conferencista3.png" alt="Conferencista 3">
+        <h3>Andrés Rodríguez</h3>
+        <p>Docente universitario y conferencista en gestión del talento humano. Amplia experiencia en actualización
+          normativa y gestión del cambio laboral.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nuestros Afiliados nos Recomiendan -->
+  <section class="afiliados-section">
+    <div class="afiliados-container">
+      <h2>Nuestros Afiliados nos Recomiendan</h2>
+      <p class="afiliados-subtitle">Conoce las experiencias de quienes confían en nosotros</p>
+
+      <div class="videos-grid">
+        <!-- Video 1 -->
+        <div class="video-item">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/bbPaKP656Rw" title="Video testimonio 1" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Video 2 -->
+        <div class="video-item">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/J1DN3vIB5pI" title="Video testimonio 2" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Video 3 -->
+        <div class="video-item">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/sraEuSH8pv0" title="Video testimonio 3" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Video 4 -->
+        <div class="video-item">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/N78vHdH33C4" title="Video testimonio 4" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Video 5 -->
+        <div class="video-item">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/I7jDvOYnsO0" title="Video testimonio 5" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Video 6 -->
+        <div class="video-item">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/tiAxFXz2Iy8" title="Video testimonio 6" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-column">
+        <h3>SEDE PRINCIPAL BOGOTÁ</h3>
+        <p><strong>Dirección:</strong> Carrera 24 No. 27 a 21</p>
+        <p><strong>Tels:</strong> 601 241 51 00 / 601 245 18 44 / 601 626 50 41</p>
+        <p><strong>Cel:</strong> 3125948705</p>
+        <p>312 490 21 43 / 300 218 32 46 / 311 382 06 19</p>
+        <p>Bogotá – Colombia</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>SEDE VILLAVICENCIO</h3>
+        <p><strong>Dirección:</strong> CLL 27# 44B – 8</p>
+        <p>Ed Gestar Ofc. 303, Barrio el Buque</p>
+        <p><strong>Tel:</strong> 608 678 39 15</p>
+        <p><strong>Cel:</strong> 317 646 77 53 / 314 203 34 97 / 310 518 23 10</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>SEDE IBAGUÉ</h3>
+        <p><strong>Dirección:</strong> Carrera 6 No. 53-54</p>
+        <p>Torre 1 oficina 801 Edificio Torreón Empresarial</p>
+        <p><strong>Tel:</strong> 608 276 18 05</p>
+        <p><strong>Cel:</strong> 317 471 90 18 / 317 479 82 05</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>SEDE TUNJA</h3>
+        <p><strong>Dirección:</strong> Carrera 1F #40 – 149</p>
+        <p>Ed. Marca Torre 2 oficina 518</p>
+        <p><strong>Tel:</strong> 608 740 19 66 / 608 276 18 05</p>
+        <p><strong>Cel:</strong> 316 025 44 62 / 310 518 23 20</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>SEDE CHÍA</h3>
+        <p><strong>Dirección:</strong> OXus centro empresarial km. 1.5 vía Chía – Cajicá</p>
+        <p><strong>Tel:</strong> 601 863 01 31</p>
+        <p><strong>Cel:</strong> 310 518 23 47 / 317 513 24 62</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>CONTACTO USA</h3>
+        <p><strong>Dirección:</strong> 1395 Brickel AVE. 8TH FLOOR</p>
+        <p>Miami, FL — Acevedo Associates</p>
+        <p>Miami – USA 33131</p>
+      </div>
+    </div>
+
+
+
+    <div class="social-icons">
+      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+
+  </footer>
+
+
+
+  <!-- CryptoJS solo con src, sin contenido adentro -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" defer></script>
+
+  <!-- Tu lógica propia -->
+  <script src="script.js" defer></script>
+
+  <!-- Reveal -->
+  <script>
+    (() => {
+      const els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window) || els.length === 0) {
+        els.forEach(el => el.classList.add('is-visible'));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+
+      els.forEach(el => io.observe(el));
+    })();
+  </script>
+
+</body>
+
+</html>
