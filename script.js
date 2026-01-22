@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
       payuForm.appendChild(ex5);
 
       // URLs Apps Script
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdAfgMctUL-ijsTMqurj9vqbtbZSnZwmfjRIaruI_GKlKuUfFCkBHaMsQNaS8Rcmi1/exec';
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUnjlyQCIbZMZfXdsxGR6BXBy9wyukTaaes5M5vc7BVxe2oMfToSDDg1V6InPD0au3/exec';
 
       // ✅ Solo mando vendedor + referencia (NO empresa por URL)
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
