@@ -64,7 +64,7 @@ body {
 .hero {
   position: relative;
   height: 80vh;
-  background: url('img/slider1.jpeg') center/cover no-repeat;
+  background: url('img/slider1.jpg') center/cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -77,7 +77,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(0, 0, 0, 0.6));
+  background: linear-gradient(120deg, rgba(0, 0, 0, 0.3));
   z-index: 1;
 }
 
@@ -363,12 +363,23 @@ button:active {
   transform: translateY(1px) scale(.995);
 }
 
-/* =========================
-   Resto del contenido
-   ========================= */
+
+/* FONDO A ANCHO COMPLETO */
+.promocion-bg {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 100%;
+  background: linear-gradient(135deg, #40c27d, var(--verde));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 80px 0; 
+}
+
+
 .promocion {
   width: min(1180px, 92vw);
-  margin: 42px auto 24px;
+  margin: 0 auto;
   background: var(--white);
   border: 1px solid var(--gris-200);
   border-radius: var(--radius-lg);
@@ -380,6 +391,7 @@ button:active {
   width: 100%;
   display: block;
 }
+
 
 .contenido {
   width: min(1180px, 92vw);
