@@ -118,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inputEmpresa.value = '';
       }
 
-      // Remover expansión del formulario
       const formShell = document.querySelector('.form-shell');
       if (formShell) formShell.classList.remove('expanded');
 
@@ -134,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (inputEmpresa) inputEmpresa.setAttribute('required', 'required');
 
-      // Agregar expansión al formulario
       const formShell = document.querySelector('.form-shell');
       if (formShell) formShell.classList.add('expanded');
 
@@ -170,17 +168,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   actualizarPrecio();
 
-  // Detectar vendedor por URL
+  // ✅ Detectar vendedor por URL (solo ?vendedor=NUMERO)
   function detectVendedorFromURL() {
-    const query = (window.location.search || '').toLowerCase();
-    const params = new URLSearchParams(query);
-    if (params.has('vendedor')) return params.get('vendedor') || 'sin_vendedor';
-    const match = query.match(/\?vendedor(\d+)/i);
-    if (match) return `vendedor${match[1]}`;
-    return 'sin_vendedor';
+    const params = new URLSearchParams(window.location.search || '');
+    const v = (params.get('vendedor') || '').trim();
+    // Si no viene, o viene vacío, devolvemos sin_vendedor
+    if (!v) return 'sin_vendedor';
+    // Permitimos cualquier valor, pero tu caso es numérico
+    return v;
   }
 
   const idVendedor = detectVendedorFromURL();
+
+  // Si existe un input #vendedor en tu HTML lo llena; si no, no pasa nada
   const inputVendedor = document.getElementById('vendedor');
   if (inputVendedor) inputVendedor.value = idVendedor;
 
@@ -205,9 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
       '>': '&gt;',
       '"': '&quot;',
       "'": '&#x27;',
-      "/": '&#x2F;',
     };
-    const reg = /[&<>"'/]/ig;
+    const reg = /[&<>"']/g;
     return str.replace(reg, (match) => (map[match]));
   }
 
@@ -215,13 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function validarFormulario(form) {
     if (!form) return false;
 
-    // 1. Honeypot check (Bot protection)
     if (inputHoneypot && inputHoneypot.value !== '') {
       console.warn('Bot detected via honeypot.');
-      return false; // Silently fail
+      return false;
     }
 
-    // 2. Browser validity check
     if (!form.checkValidity()) {
       const primerInvalido = form.querySelector(':invalid');
       let mensaje = 'Por favor completa los campos obligatorios.';
@@ -246,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return false;
     }
 
-    // 3. Custom Logic: Email Match
     if (inputCorreo && inputConfirmarCorreo) {
       if (inputCorreo.value.trim().toLowerCase() !== inputConfirmarCorreo.value.trim().toLowerCase()) {
         mostrarAlerta('Los correos electrónicos no coinciden. Por favor verifícalos.');
@@ -278,14 +274,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!validarFormulario(form)) return;
 
       const formData = new FormData(form);
-      // Sanitize inputs
+
       const empresa = sanitizeInput((formData.get('empresa') || '').toString());
       const correo = sanitizeInput((formData.get('correo') || '').toString());
       const telefono = sanitizeInput((formData.get('telefono') || '').toString());
       const persona = sanitizeInput((formData.get('nombre') || '').toString());
       const tipo = tipoPersona?.value || '';
       const ubi = ubicacion?.value || 'N/A';
-      const vendedor = inputVendedor?.value || 'sin_vendedor';
+
+      // vendedor numérico desde URL o input
+      const vendedor = (inputVendedor?.value || idVendedor || 'sin_vendedor').toString().trim() || 'sin_vendedor';
 
       if (typeof CryptoJS === 'undefined' || !CryptoJS.MD5) {
         mostrarAlerta('No se pudo inicializar la librería de firma (CryptoJS). Revisa tu conexión.');
@@ -296,8 +294,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const merchantId = '508029';
       const accountId = '512321';
       const currency = 'COP';
+
+      // ✅ Monto con 2 decimales (PayU suele requerirlo)
+      const amount = Number(valor).toFixed(2);
+
       const referenceCode = `CJI_${Date.now()}_${vendedor}`;
-      const amount = String(valor);
       const rawSignature = `${apiKey}~${merchantId}~${referenceCode}~${amount}~${currency}`;
       const signature = CryptoJS.MD5(rawSignature).toString();
 
@@ -311,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
       payuForm.setAttribute('action', 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/');
       payuForm.setAttribute('target', '_top');
 
+      // Campos PayU
       ensureHiddenInput(payuForm, 'merchantId').value = merchantId;
       ensureHiddenInput(payuForm, 'accountId').value = accountId;
       ensureHiddenInput(payuForm, 'description').value = 'Pago de formulario CJI';
@@ -321,14 +323,20 @@ document.addEventListener('DOMContentLoaded', () => {
       ensureHiddenInput(payuForm, 'currency').value = currency;
       ensureHiddenInput(payuForm, 'signature', 'signature').value = signature;
       ensureHiddenInput(payuForm, 'buyerEmail', 'buyerEmail').value = correo;
+
+      // ✅ Sandbox explícito (evita ambigüedades)
+      ensureHiddenInput(payuForm, 'test', 'test').value = '1';
+
+      // extras
       ensureHiddenInput(payuForm, 'extra1', 'extra1').value = tipo;
       ensureHiddenInput(payuForm, 'extra2', 'extra2').value = ubi;
 
+      // Limpieza extras dinámicos
       ['extra3', 'extra4', 'extra5'].forEach((name) => {
         payuForm.querySelectorAll(`input[name="${name}"]`).forEach((el) => el.remove());
       });
 
-      // extra3: JSON completo para que Apps Script tenga todos los datos (AHORA INCLUYE CORREO)
+      // extra3: JSON completo
       const ex3 = document.createElement('input');
       ex3.type = 'hidden';
       ex3.name = 'extra3';
@@ -340,7 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ubicacion: ubi,
         vendedor,
         valor: amount,
-        correo
+        correo,
+        referenceCode
       });
       payuForm.appendChild(ex3);
 
@@ -358,14 +367,18 @@ document.addEventListener('DOMContentLoaded', () => {
       ex5.value = empresa;
       payuForm.appendChild(ex5);
 
-      // URLs Apps Script (SOLO se disparan después del pago)
+      // URLs Apps Script
       const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdAfgMctUL-ijsTMqurj9vqbtbZSnZwmfjRIaruI_GKlKuUfFCkBHaMsQNaS8Rcmi1/exec';
-      const qs = `?vendedor=${encodeURIComponent(vendedor)}&empresa=${encodeURIComponent(empresa)}`;
+
+      // ✅ Solo mando vendedor + referencia (NO empresa por URL)
+      const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
+
       ensureHiddenInput(payuForm, 'responseUrl', 'responseUrl').value = `${APPS_SCRIPT_URL}${qs}`;
       ensureHiddenInput(payuForm, 'confirmationUrl', 'confirmationUrl').value = `${APPS_SCRIPT_URL}${qs}`;
 
       btnPayu.disabled = true;
       payuForm.submit();
+
     } catch (err) {
       console.error('[PayU] Error en el envío:', err);
       mostrarAlerta('Ocurrió un error al preparar el pago. Revisa la consola para más detalles.');
