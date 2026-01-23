@@ -168,16 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   actualizarPrecio();
 
-  // ✅ Detectar vendedor por URL (solo ?vendedor=NUMERO)
+  // ✅ Detectar vendedor por URL
   function detectVendedorFromURL() {
     const params = new URLSearchParams(window.location.search || '');
     const v = (params.get('vendedor') || '').trim();
-    if (!v) return 'sin_vendedor';
-    return v;
+    return v || 'sin_vendedor';
   }
 
   const idVendedor = detectVendedorFromURL();
-
   const inputVendedor = document.getElementById('vendedor');
   if (inputVendedor) inputVendedor.value = idVendedor;
 
@@ -191,13 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
       form.appendChild(el);
     }
     return el;
-  }
-
-  // ------------ Sanitización SOLO para mostrar en UI (no para PayU) ------------
-  function sanitizeInput(str) {
-    if (!str) return '';
-    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' };
-    return String(str).replace(/[&<>"']/g, (m) => map[m]);
   }
 
   // ------------ Validación personalizada ------------
@@ -246,48 +237,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ✅ límite 255 para extras PayU
   function limit255(v) {
-    return (v == null ? '' : String(v)).slice(0, 255);
+    return (v == null ? '' : String(v)).trim().slice(0, 255);
   }
+
+  // ✅ Anti doble-click / doble submit
+  let pagando = false;
 
   // ------------------- PAGO PAYU -------------------
   btnPayu?.addEventListener('click', () => {
     try {
+      if (pagando) return;
+      pagando = true;
+
       const valor = btnPayu.dataset.valor;
       if (!valor) {
+        pagando = false;
         mostrarAlerta('Por favor, seleccione el tipo de cliente y (si aplica) la ubicación antes de pagar.');
         return;
       }
 
       const chkPolitica = document.getElementById('politica');
       if (chkPolitica && !chkPolitica.checked) {
+        pagando = false;
         mostrarAlerta('Debes aceptar la política de privacidad para continuar.');
         chkPolitica.focus();
         return;
       }
 
       const form = document.getElementById('formulario');
-      if (!validarFormulario(form)) return;
+      if (!validarFormulario(form)) {
+        pagando = false;
+        return;
+      }
 
       const formData = new FormData(form);
 
-      // ✅ Valores RAW (los reales) para PayU y Apps Script
+      // ✅ Valores RAW
       const empresaRaw = (formData.get('empresa') || '').toString().trim();
       const correoRaw = (formData.get('correo') || '').toString().trim();
       const telefonoRaw = (formData.get('telefono') || '').toString().trim();
       const personaRaw = (formData.get('nombre') || '').toString().trim();
 
-      // (Opcional) solo si tú quieres mostrarlos en UI
-      const empresa = sanitizeInput(empresaRaw);
-      const correo = sanitizeInput(correoRaw);
-      const telefono = sanitizeInput(telefonoRaw);
-      const persona = sanitizeInput(personaRaw);
-
       const tipo = tipoPersona?.value || '';
       const ubi = ubicacion?.value || 'N/A';
-
       const vendedor = (inputVendedor?.value || idVendedor || 'sin_vendedor').toString().trim() || 'sin_vendedor';
 
       if (typeof CryptoJS === 'undefined' || !CryptoJS.MD5) {
+        pagando = false;
         mostrarAlerta('No se pudo inicializar la librería de firma (CryptoJS). Revisa tu conexión.');
         return;
       }
@@ -305,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const payuForm = document.getElementById('formPayu');
       if (!payuForm) {
+        pagando = false;
         mostrarAlerta('Error interno: formulario de pago no disponible.');
         return;
       }
@@ -324,49 +321,46 @@ document.addEventListener('DOMContentLoaded', () => {
       ensureHiddenInput(payuForm, 'currency').value = currency;
       ensureHiddenInput(payuForm, 'signature', 'signature').value = signature;
 
-      // ✅ buyerEmail debe ser REAL (RAW)
+      // buyerEmail real
       ensureHiddenInput(payuForm, 'buyerEmail', 'buyerEmail').value = correoRaw;
 
+      // Sandbox
       ensureHiddenInput(payuForm, 'test', 'test').value = '1';
 
-      // extra1/extra2 (<=255)
+      // extra1/extra2
       ensureHiddenInput(payuForm, 'extra1', 'extra1').value = limit255(tipo);
       ensureHiddenInput(payuForm, 'extra2', 'extra2').value = limit255(ubi);
 
-      // Limpieza extras dinámicos
+      // Limpieza extras
       ['extra3', 'extra4', 'extra5'].forEach((name) => {
         payuForm.querySelectorAll(`input[name="${name}"]`).forEach((el) => el.remove());
       });
 
-      // ✅ extra3 COMPACTO (NO JSON) <=255
-      // ref / vendedor / tipo / ubi / correo
-      const extra3Compact = limit255(`ref=${referenceCode}|v=${vendedor}|t=${tipo}|u=${ubi}|c=${correoRaw}`);
-
+      // ✅ EXTRA3 = NOMBRE (persona)
       const ex3 = document.createElement('input');
       ex3.type = 'hidden';
       ex3.name = 'extra3';
-      ex3.value = extra3Compact;
+      ex3.value = limit255(personaRaw);
       payuForm.appendChild(ex3);
 
-      // extra4: teléfono <=255
+      // ✅ EXTRA4 = TELÉFONO
       const ex4 = document.createElement('input');
       ex4.type = 'hidden';
       ex4.name = 'extra4';
       ex4.value = limit255(telefonoRaw);
       payuForm.appendChild(ex4);
 
-      // extra5: "Nombre | Empresa" <=255
-      const nombreEmpresa = empresaRaw ? `${personaRaw} | ${empresaRaw}` : `${personaRaw}`;
+      // ✅ EXTRA5 = EMPRESA
       const ex5 = document.createElement('input');
       ex5.type = 'hidden';
       ex5.name = 'extra5';
-      ex5.value = limit255(nombreEmpresa);
+      ex5.value = limit255(empresaRaw);
       payuForm.appendChild(ex5);
 
       // URLs Apps Script
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOul1KF87znEql7o76pzGC0kWEGRkE4sL830Jm01LGdHej-8lZ_km2p6JfWz5LVwr7/exec';
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtWnwMwYoL-zKKeWm_BaTko0Mq-Bz9yfG-buFktl7w_YOzwnxkamSY83j1_1opkfsE/exec';
 
-      // ✅ Solo mando vendedor + referencia (corto)
+      // Solo vendedor + referencia
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
 
       ensureHiddenInput(payuForm, 'responseUrl', 'responseUrl').value = `${APPS_SCRIPT_URL}${qs}`;
@@ -377,6 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (err) {
       console.error('[PayU] Error en el envío:', err);
+      pagando = false;
       mostrarAlerta('Ocurrió un error al preparar el pago. Revisa la consola para más detalles.');
     }
   });
