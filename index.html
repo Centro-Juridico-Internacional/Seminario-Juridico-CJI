@@ -335,67 +335,20 @@
 
 
 
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-column">
-        <h3>SEDE PRINCIPAL BOGOTÁ</h3>
-        <p><strong>Dirección:</strong> Carrera 24 No. 27 a 21</p>
-        <p><strong>Tels:</strong> 601 241 51 00 / 601 245 18 44 / 601 626 50 41</p>
-        <p><strong>Cel:</strong> 3125948705</p>
-        <p>312 490 21 43 / 300 218 32 46 / 311 382 06 19</p>
-        <p>Bogotá – Colombia</p>
-      </div>
+  <!-- El contenedor donde se inyectará el footer compartido -->
+<div id="cji-shared-footer-container-2"></div>
 
-      <div class="footer-column">
-        <h3>SEDE VILLAVICENCIO</h3>
-        <p><strong>Dirección:</strong> CLL 27# 44B – 8</p>
-        <p>Ed Gestar Ofc. 303, Barrio el Buque</p>
-        <p><strong>Tel:</strong> 608 678 39 15</p>
-        <p><strong>Cel:</strong> 317 646 77 53 / 314 203 34 97 / 310 518 23 10</p>
-      </div>
+<!-- Script de carga remoto -->
+<script src="https://pagina-principal-cji.vercel.app/footer-loader.js"></script>
 
-      <div class="footer-column">
-        <h3>SEDE IBAGUÉ</h3>
-        <p><strong>Dirección:</strong> Carrera 6 No. 53-54</p>
-        <p>Torre 1 oficina 801 Edificio Torreón Empresarial</p>
-        <p><strong>Tel:</strong> 608 276 18 05</p>
-        <p><strong>Cel:</strong> 317 471 90 18 / 317 479 82 05</p>
-      </div>
-
-      <div class="footer-column">
-        <h3>SEDE TUNJA</h3>
-        <p><strong>Dirección:</strong> Carrera 1F #40 – 149</p>
-        <p>Ed. Marca Torre 2 oficina 518</p>
-        <p><strong>Tel:</strong> 608 740 19 66 / 608 276 18 05</p>
-        <p><strong>Cel:</strong> 316 025 44 62 / 310 518 23 20</p>
-      </div>
-
-      <div class="footer-column">
-        <h3>SEDE CHÍA</h3>
-        <p><strong>Dirección:</strong> OXus centro empresarial km. 1.5 vía Chía – Cajicá</p>
-        <p><strong>Tel:</strong> 601 863 01 31</p>
-        <p><strong>Cel:</strong> 310 518 23 47 / 317 513 24 62</p>
-      </div>
-
-      <div class="footer-column">
-        <h3>CONTACTO USA</h3>
-        <p><strong>Dirección:</strong> 1395 Brickel AVE. 8TH FLOOR</p>
-        <p>Miami, FL — Acevedo Associates</p>
-        <p>Miami – USA 33131</p>
-      </div>
-    </div>
-
-
-
-    <div class="social-icons">
-      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-      <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-      <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-      <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-    </div>
-
-  </footer>
+<style>
+    /* Estilos base para evitar CLS (Cumulative Layout Shift) mientras carga */
+    #cji-shared-footer-container-2 {
+        width: 100%;
+        min-height: 100px;
+        background-color: #042501; /* Fondo institucional */
+    }
+</style>
 
 
 
