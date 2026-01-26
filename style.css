@@ -1292,82 +1292,34 @@ center h2,
 
 
 /* =========================
-   FIX RESPONSIVE (SIN TOCAR FORMULARIO NI SLIDER)
-   Pegar al FINAL del CSS
+   HERO: CENTRADO CORRECTO (SIN BAJARLO DE MÁS)
    ========================= */
 
-/* 1) HERO: quita el padding negativo (es inválido) sin mover el form */
+/* Quitar el padding-top negativo (no sirve) y centrar */
 .hero{
-  padding-top: 0 !important;          /* anula el -160px */
-  padding: 56px 0 40px !important;    /* espacio real */
-  place-items: center !important;      /* mejor centrado */
+  padding-top: 0 !important;           /* anula el -160px inválido */
+  display: grid;
+  place-items: center;                 /* centra vertical y horizontal */
+  padding: 24px 0 24px !important;     /* padding MUY leve */
 }
 
-/* En móvil: que el hero no quede apretado */
-@media (max-width: 768px){
-  .hero{
-    padding: 66px 0 44px !important;
-    min-height: 80vh; /* conservas tu intención */
+/* Ajuste fino: subir un poquito en pantallas grandes */
+@media (min-width: 992px){
+  .hero-content{
+    transform: translateY(-18px);      /* sube el bloque sin romper nada */
   }
 }
 
-/* 2) Títulos: evita 2rem fijo en móvil (sin tocar el formulario) */
-center h1,
-center h2,
-.inversion h1,
-.afiliados-container h2,
-.contenido h1{
-  font-size: clamp(1.35rem, 4.2vw, 2rem) !important;
-}
-
-/* 3) Temario: controla tamaños para que no se vea gigante en móvil */
-@media (max-width: 768px){
-  .bloque p{ font-size: 16px; }
-  .temario-col li{ font-size: 16px; }
-}
-
-/* 4) Conferencistas: mejora grid sin tocar nada del form */
-@media (max-width: 992px){
-  .cards-conferencistas{ grid-template-columns: repeat(2, 1fr); }
-  .card-conf img{ height: 320px; object-fit: cover; }
-}
-
-@media (max-width: 768px){
-  .cards-conferencistas{ grid-template-columns: 1fr; }
-  .card-conf img{ height: 260px; object-fit: cover; }
-}
-
-/* 5) Video y promoción: asegurar que no se “salgan” del ancho */
-.promocion img,
-.video-container,
-.video-container video{
-  max-width: 100%;
-}
-
-/* 6) Afiliados videos: separación más cómoda en móvil */
-@media (max-width: 768px){
-  .afiliados-section{ padding: 30px 16px; }
-  .videos-grid{ gap: 18px; }
-}
-
-/* 7) Seguridad extra anti “scroll horizontal” en móvil */
-html, body{
-  overflow-x: hidden;
-}
-
-
-/* =========================
-   FIX CENTRADO HERO EN PANTALLAS GRANDES
-   ========================= */
-
-/* En desktop y pantallas grandes: centrar verticalmente */
-.hero{
-  place-items: center !important;
-}
-
-/* Ajuste fino para pantallas MUY grandes (4K, monitores altos) */
+/* En pantallas muy altas (4K), sube un poco más */
 @media (min-width: 1400px){
   .hero-content{
-    padding-top: 40px;
+    transform: translateY(-28px);
+  }
+}
+
+/* En móvil NO mover nada */
+@media (max-width: 768px){
+  .hero-content{
+    transform: none;
   }
 }
