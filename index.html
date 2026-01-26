@@ -57,6 +57,8 @@
         <p class="sub">Déjanos tus datos y te contactaremos</p>
 
         <form id="formulario" autocomplete="off">
+          <form id="formPayu" style="display:none;"></form>
+
           <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre completo" required>
           <input type="email" id="correo" name="correo" placeholder="Ingrese su correo electrónico" required>
           <input type="email" id="confirmarCorreo" name="confirmarCorreo" placeholder="Confirme su correo electrónico"
@@ -262,20 +264,16 @@
     </div>
   </section>
 
-  <!-- FOOTER REMOTO -->
-  <div id="cji-shared-footer-container-2"></div>
-  <script src="https://elfsightcdn.com/platform.js" async></script>
-
-<div class="elfsight-app-2cb0a639-a095-4102-9d2c-5a06678823a8" data-elfsight-app-lazy></div>
-
+  <!-- Footer remoto -->
 <div id="cji-shared-footer-container-2"></div>
 <script src="https://pagina-principal-cji.vercel.app/footer-loader.js"></script>
 
-<!-- ✅ CryptoJS sin defer -->
+<!-- ✅ CryptoJS: SIN defer para garantizar disponibilidad -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
-<!-- ✅ Tu script sí puede ir defer -->
+<!-- ✅ Tu lógica -->
 <script src="script.js" defer></script>
+
 
   
 
