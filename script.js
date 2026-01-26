@@ -338,38 +338,39 @@ document.addEventListener('DOMContentLoaded', () => {
       // ✅ extra1 = tipo
       ensureHiddenInput(payuForm, 'extra1', 'extra1').value = limit255(tipo);
 
-      // ✅ extra2 = "ubicacion|v=VENDEDOR"
-      const extra2Mix = `${ubi}|v=${vendedor}`;
-      ensureHiddenInput(payuForm, 'extra2', 'extra2').value = limit255(extra2Mix);
+      // ✅ extra2 = PAQUETE (esto sí llega a tu Apps Script)
+      // u=ubicacion|v=vendedor|tel=telefono|emp=empresa
+      const empVal = (tipo === 'empresa') ? empresaRaw : '';
+      const extra2Pack = `u=${ubi}|v=${vendedor}|tel=${telefonoRaw}|emp=${empVal}`;
+      ensureHiddenInput(payuForm, 'extra2', 'extra2').value = limit255(extra2Pack);
 
       // Limpieza extras dinámicos
       ['extra3', 'extra4', 'extra5'].forEach((name) => {
         payuForm.querySelectorAll(`input[name="${name}"]`).forEach((el) => el.remove());
       });
 
-      // ✅ EXTRA3 = NOMBRE
+      // ✅ extra3 = NOMBRE (ya confirmado que llega)
       const ex3 = document.createElement('input');
       ex3.type = 'hidden';
       ex3.name = 'extra3';
       ex3.value = limit255(personaRaw);
       payuForm.appendChild(ex3);
 
-      // ✅ EXTRA4 = TELÉFONO
+      // (Opcional) Igual enviamos extra4/extra5 por si PayU los reenvía
       const ex4 = document.createElement('input');
       ex4.type = 'hidden';
       ex4.name = 'extra4';
       ex4.value = limit255(telefonoRaw);
       payuForm.appendChild(ex4);
 
-      // ✅ EXTRA5 = EMPRESA (solo si tipo=empresa)
       const ex5 = document.createElement('input');
       ex5.type = 'hidden';
       ex5.name = 'extra5';
-      ex5.value = limit255(tipo === 'empresa' ? empresaRaw : '');
+      ex5.value = limit255(empVal);
       payuForm.appendChild(ex5);
 
       // URLs Apps Script
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-kbsPhJf4feLrJqUKzXuBYTVplqcsQdMiUQXweftR6s2ccgTMGJvLLqGiSjIcCWAd/exec';
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbylET_BHHnE1xxLe8IxV0j1f4WCYXmXqxk7qkAiCqqr7dn7HIGoduYaRxYNkkyDJ3Ze/exec';
 
       // Solo vendedor + referencia
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
