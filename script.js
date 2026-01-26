@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btnPayu.dataset.valor = String(precio);
     } else {
       precioTexto.textContent = '';
-      btnPayu.textContent = 'Pagar con PayU (Sandbox)';
+      btnPayu.textContent = 'Separar mi cupo';
       btnPayu.dataset.valor = '';
     }
   }
