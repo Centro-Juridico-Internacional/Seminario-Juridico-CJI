@@ -91,8 +91,9 @@ body {
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 1100px;
+  max-width: 1250px;
   padding: 0 40px;
+  margin-top: -40px;
   animation: fadeUp 1.2s ease both;
 }
 
@@ -122,7 +123,7 @@ body {
   list-style: none;
   padding: 0;
   margin: 0 auto 32px;
-  max-width: 900px;
+  max-width: 1150px;
   text-align: left;
 }
 
@@ -133,7 +134,7 @@ body {
   line-height: 1.5;
   font-size: 1.25rem;
   color: #f0f7f2;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .hero-benefits li::before {
@@ -145,6 +146,32 @@ body {
   height: 36px;
   background: url("img/chulo.png") no-repeat center/contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Texto de scroll */
+.scroll-hint {
+  color: #fff;
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 0;
+  opacity: 0.9;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  animation: bounce 2s infinite;
+  position: relative;
+  z-index: 3;
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(8px);
+  }
 }
 
 /* =========================
