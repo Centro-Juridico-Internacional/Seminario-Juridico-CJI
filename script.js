@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
       payuForm.appendChild(ex5);
 
       // URLs Apps Script
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtWnwMwYoL-zKKeWm_BaTko0Mq-Bz9yfG-buFktl7w_YOzwnxkamSY83j1_1opkfsE/exec';
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-kbsPhJf4feLrJqUKzXuBYTVplqcsQdMiUQXweftR6s2ccgTMGJvLLqGiSjIcCWAd/exec';
 
       // Solo vendedor + referencia
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
