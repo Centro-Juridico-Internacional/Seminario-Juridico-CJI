@@ -1323,3 +1323,161 @@ center h2,
     transform: none;
   }
 }
+
+
+/* =========================================================
+   RESPONSIVE PRO (SIN TOCAR FORMULARIO NI SLIDER)
+   Pegar al FINAL del CSS
+   ========================================================= */
+
+/* Anti scroll horizontal */
+html, body { overflow-x: hidden; }
+
+/* ---------- TOP BAR (sin afectar form) ---------- */
+.top-bar .container{
+  gap: 12px;
+  padding: 10px 0;
+}
+.top-bar img{
+  max-width: 180px;
+  width: auto;           /* evita el 17% que a veces queda raro */
+  height: auto;
+}
+.pbx-numbers{
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* ---------- HERO: centrado real + padding inteligente ---------- */
+/* Base: siempre centrado, sin bajar de más */
+.hero{
+  display: grid;
+  place-items: center;
+  min-height: 80vh;
+  padding: clamp(20px, 5vh, 56px) 0 clamp(16px, 4vh, 44px) !important;
+  text-align: center;
+}
+
+/* Mantén el hero-content dentro de un ancho “bonito” en pantallas grandes */
+.hero-content{
+  width: min(1100px, 92vw);
+  padding: 0 16px 28px; /* reduce el padding interno para que no “baje” */
+}
+
+/* Ajuste fino: en desktop, sube un poco el contenido para que no quede pegado arriba ni muy abajo */
+@media (min-width: 992px){
+  .hero-content{
+    transform: translateY(-12px);
+  }
+}
+
+/* En pantallas muy altas (4K), sube un poco más */
+@media (min-width: 1400px){
+  .hero{
+    min-height: 78vh; /* evita que quede “demasiado aire” arriba/abajo */
+  }
+  .hero-content{
+    transform: translateY(-18px);
+  }
+}
+
+/* En móvil: NO mover con transform para evitar recortes */
+@media (max-width: 768px){
+  .hero-content{ transform: none; }
+  .hero{ min-height: 80vh; }
+}
+
+/* Beneficios: controla ancho + legibilidad */
+.hero-benefits{
+  width: min(980px, 100%);
+  margin-top: 8px;
+}
+.hero-benefits li{
+  max-width: 75ch; /* evita líneas eternas en monitores */
+}
+@media (max-width: 768px){
+  .hero-benefits li{ max-width: 100%; }
+}
+
+/* ---------- TITULOS (desde “Qué aprenderá” hacia abajo) ---------- */
+/* Evita que 2rem fijo se vea enorme o muy pequeño según pantalla */
+center h1,
+center h2,
+.inversion h1,
+.afiliados-container h2,
+.contenido h1{
+  font-size: clamp(1.4rem, 3.5vw, 2rem) !important;
+  margin: 18px 0 18px !important;
+}
+
+/* ---------- CONTENIDO / TEMARIO ---------- */
+.bloque p{
+  line-height: 1.7;
+}
+.temario-col li{
+  line-height: 1.6;
+}
+
+/* Desktop grande: un poco más de aire */
+@media (min-width: 1200px){
+  .contenido{ gap: 26px; }
+  .bloque{ padding: 22px; }
+  .temario-col{ padding: 22px; }
+}
+
+/* Tablet: reduce fuentes un poco */
+@media (max-width: 992px){
+  .bloque p{ font-size: 16px; }
+  .temario-col li{ font-size: 16px; }
+}
+
+/* Móvil: que no se vea “gigante” */
+@media (max-width: 768px){
+  .bloque p{ font-size: 15.5px; }
+  .temario-col li{ font-size: 15.5px; padding-left: 30px; }
+  .temario-col li::before{ width: 20px; height: 20px; top: 3px; }
+}
+
+/* ---------- CONFERENCISTAS (sin tocar form) ---------- */
+@media (min-width: 1200px){
+  .cards-conferencistas{ gap: 26px; }
+}
+@media (max-width: 992px){
+  .cards-conferencistas{ grid-template-columns: repeat(2, 1fr); }
+  .card-conf img{
+    height: 320px;
+    object-fit: cover; /* se ve más “pro” que contain en responsive */
+  }
+}
+@media (max-width: 768px){
+  .cards-conferencistas{ grid-template-columns: 1fr; }
+  .card-conf img{ height: 260px; object-fit: cover; }
+}
+
+/* ---------- VIDEO / PROMO / AFILIADOS: asegurar ancho ---------- */
+.promocion, .video, .conferencistas, .afiliados-section, .inversion{
+  width: min(1180px, 92vw);
+  margin-left: auto;
+  margin-right: auto;
+}
+.promocion img, .video-container, .video-container video{
+  max-width: 100%;
+}
+
+/* Afiliados: grid más fluida en pantallas medianas */
+@media (max-width: 1100px){
+  .videos-grid{ gap: 22px; }
+}
+@media (max-width: 992px){
+  .videos-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px){
+  .afiliados-section{ padding: 30px 16px; }
+  .videos-grid{ grid-template-columns: 1fr; gap: 18px; }
+}
+
+/* ---------- Footer remoto: evita cortes en móvil ---------- */
+#cji-shared-footer-container-2{
+  width: 100%;
+  overflow: hidden;
+}
