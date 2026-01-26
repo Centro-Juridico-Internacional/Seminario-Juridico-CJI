@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // ------------------- POPUP MODERNO -------------------
+  // =================== POPUP MODERNO ===================
   function mostrarAlerta(mensaje) {
     if (document.querySelector('.alerta-modal')) return;
 
@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.addEventListener('click', (e) => {
       if (e.target.classList.contains('alerta-modal')) cerrar();
     });
+
     const onKey = (e) => { if (e.key === 'Escape') cerrar(); };
 
     function cerrar() {
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', onKey);
   }
 
-  // ------------------- SLIDER (scope a .form-shell) -------------------
+  // =================== SLIDER (scope a .form-shell) ===================
   const shell = document.querySelector('.form-shell') || document;
   const left = shell ? shell.querySelector('.left') : null;
   const dots = shell ? shell.querySelectorAll('.dot') : [];
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     iniciarSlider();
   }
 
-  // ------------------- FORMULARIO -------------------
+  // =================== FORMULARIO ===================
   const tipoPersona = document.getElementById('tipoPersona');
   const ubicacion = document.getElementById('ubicacion');
   const campoUbicacion = document.getElementById('campoUbicacion');
@@ -105,13 +106,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let precio = null;
 
     if (tipoPersona && tipoPersona.value === 'natural') {
+      // Oculta ubicación (según tu lógica original)
       if (campoUbicacion) campoUbicacion.classList.add('oculto');
       if (ubicacion) ubicacion.removeAttribute('required');
 
+      // Oculta empresa y limpia
       if (campoEmpresa) {
         campoEmpresa.classList.remove('mostrar');
         campoEmpresa.classList.add('hidden');
         campoEmpresa.classList.remove('oculto');
+        campoEmpresa.setAttribute('aria-hidden', 'true');
       }
       if (inputEmpresa) {
         inputEmpresa.removeAttribute('required');
@@ -124,12 +128,15 @@ document.addEventListener('DOMContentLoaded', () => {
       precio = 846983;
 
     } else if (tipoPersona && tipoPersona.value === 'empresa') {
+      // Muestra ubicación
       if (campoUbicacion) campoUbicacion.classList.remove('oculto');
       if (ubicacion) ubicacion.setAttribute('required', 'required');
 
+      // Muestra empresa
       if (campoEmpresa) {
         campoEmpresa.classList.add('mostrar');
         campoEmpresa.classList.remove('hidden', 'oculto');
+        campoEmpresa.setAttribute('aria-hidden', 'false');
       }
       if (inputEmpresa) inputEmpresa.setAttribute('required', 'required');
 
@@ -156,19 +163,23 @@ document.addEventListener('DOMContentLoaded', () => {
   tipoPersona?.addEventListener('change', actualizarPrecio);
   ubicacion?.addEventListener('change', actualizarPrecio);
 
+  // Estado inicial campo empresa
   if (tipoPersona?.value === 'empresa') {
     campoEmpresa?.classList.add('mostrar');
     campoEmpresa?.classList.remove('hidden', 'oculto');
+    campoEmpresa?.setAttribute('aria-hidden', 'false');
     if (inputEmpresa) inputEmpresa.required = true;
   } else {
     campoEmpresa?.classList.remove('mostrar');
     campoEmpresa?.classList.add('hidden');
+    campoEmpresa?.setAttribute('aria-hidden', 'true');
     if (inputEmpresa) inputEmpresa.required = false;
   }
 
   actualizarPrecio();
 
-  // ✅ Detectar vendedor por URL: ?vendedor=123
+  // =================== VENDEDOR POR URL ===================
+  // URL: https://tudominio.com/landing.html?vendedor=123
   function detectVendedorFromURL() {
     const params = new URLSearchParams(window.location.search || '');
     const v = (params.get('vendedor') || '').trim();
@@ -179,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputVendedor = document.getElementById('vendedor');
   if (inputVendedor) inputVendedor.value = idVendedor;
 
+  // =================== HELPERS PAYU ===================
   function ensureHiddenInput(form, name, idOpt) {
     let el = idOpt ? document.getElementById(idOpt) : form.querySelector(`input[name="${name}"]`);
     if (!el) {
@@ -191,7 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return el;
   }
 
-  // ------------ Validación personalizada ------------
+  function limit255(v) {
+    return (v == null ? '' : String(v)).trim().slice(0, 255);
+  }
+
+  // =================== VALIDACIÓN ===================
   function validarFormulario(form) {
     if (!form) return false;
 
@@ -235,15 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return true;
   }
 
-  // ✅ límite 255 para extras PayU
-  function limit255(v) {
-    return (v == null ? '' : String(v)).trim().slice(0, 255);
-  }
-
-  // ✅ anti doble click
+  // ✅ Anti doble click / doble submit (y re-habilita si falla)
   let pagando = false;
 
-  // ------------------- PAGO PAYU -------------------
+  // =================== PAGO PAYU ===================
   btnPayu?.addEventListener('click', () => {
     try {
       if (pagando) return;
@@ -272,14 +283,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const formData = new FormData(form);
 
-      // ✅ RAW
+      // ✅ RAW (los reales)
       const empresaRaw = (formData.get('empresa') || '').toString().trim();
       const correoRaw = (formData.get('correo') || '').toString().trim();
       const telefonoRaw = (formData.get('telefono') || '').toString().trim();
       const personaRaw = (formData.get('nombre') || '').toString().trim();
 
-      const tipo = tipoPersona?.value || '';
-      const ubi = ubicacion?.value || 'N/A';
+      const tipo = (tipoPersona?.value || '').toString().trim();
+      const ubi = (ubicacion?.value || 'N/A').toString().trim();
       const vendedor = (inputVendedor?.value || idVendedor || 'sin_vendedor').toString().trim() || 'sin_vendedor';
 
       if (typeof CryptoJS === 'undefined' || !CryptoJS.MD5) {
@@ -288,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // ⚠️ En producción NO expongas apiKey en frontend. Para Sandbox está ok.
       const apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
       const merchantId = '508029';
       const accountId = '512321';
@@ -349,17 +361,17 @@ document.addEventListener('DOMContentLoaded', () => {
       ex4.value = limit255(telefonoRaw);
       payuForm.appendChild(ex4);
 
-      // ✅ EXTRA5 = EMPRESA
+      // ✅ EXTRA5 = EMPRESA (solo si tipo=empresa)
       const ex5 = document.createElement('input');
       ex5.type = 'hidden';
       ex5.name = 'extra5';
-      ex5.value = limit255(empresaRaw);
+      ex5.value = limit255(tipo === 'empresa' ? empresaRaw : '');
       payuForm.appendChild(ex5);
 
       // URLs Apps Script
       const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtWnwMwYoL-zKKeWm_BaTko0Mq-Bz9yfG-buFktl7w_YOzwnxkamSY83j1_1opkfsE/exec';
 
-      // Solo vendedor + referencia (corto)
+      // Solo vendedor + referencia
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
 
       ensureHiddenInput(payuForm, 'responseUrl', 'responseUrl').value = `${APPS_SCRIPT_URL}${qs}`;
@@ -371,6 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.error('[PayU] Error en el envío:', err);
       pagando = false;
+      btnPayu && (btnPayu.disabled = false);
       mostrarAlerta('Ocurrió un error al preparar el pago. Revisa la consola para más detalles.');
     }
   });
