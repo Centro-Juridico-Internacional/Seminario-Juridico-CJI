@@ -67,72 +67,88 @@ body {
   width: 17%;
 }
 
-/* Hero */
+/* =========================
+   HERO (ACTUALIZADO Y LIMPIO)
+   ========================= */
 .hero {
   position: relative;
-  height: 80vh;
-  background: url('img/slider1.jpg') center/cover no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-height: 80vh;
+  background: url("img/slider1.jpg") center/cover no-repeat;
+  display: grid;
+  place-items: start center;
+  padding-top: -160px;   /* 🔼 aquí controlas cuánto sube */
   text-align: center;
   color: #fff;
   overflow: hidden;
 }
 
-.hero::before {
-  content: "";
+
+/* Overlay real (porque en el HTML ya tienes <div class="hero-overlay"></div>) */
+.hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(0, 0, 0, 0.3));
+  background: linear-gradient(
+    120deg,
+    rgba(0, 0, 0, 0.60) 0%,
+    rgba(0, 0, 0, 0.35) 45%,
+    rgba(0, 0, 0, 0.60) 100%
+  );
   z-index: 1;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 1250px;
-  padding: 0 40px;
-  margin-top: -40px;
+  width: min(1180px, 92vw);
+  padding: 10px 16px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
   animation: fadeUp 1.2s ease both;
 }
 
-.hero-content h1 {
+/* Texto superior del hero (kicker) */
+.hero-kicker {
+  font-size: clamp(1.05rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: #f0f7f2;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.65);
+  margin: 0;
+}
+
+/* Título principal */
+.hero-title {
   font-size: clamp(1.8rem, 3.5vw, 2.9rem);
-  line-height: 1.2;
+  line-height: 1.15;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  text-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-  margin-bottom: 10px;
+  text-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+  margin: 0;
 }
 
-.hero-content h1 span {
+.hero-title span {
   color: var(--dorado);
 }
 
-.hero-content p {
-  font-size: 1.5rem;
-  margin: -150px 0 26px;
-  color: #f0f7f2;
-
-}
-
-/* ✔️ Bullets del hero */
+/* Beneficios */
 .hero-benefits {
   list-style: none;
   padding: 0;
-  margin: 0 auto 32px;
-  max-width: 1150px;
+  margin: 6px auto 0;
+  width: min(1150px, 100%);
   text-align: left;
+  display: grid;
+  gap: 14px;
 }
 
 .hero-benefits li {
   position: relative;
-  padding-left: 42px;
-  margin-bottom: 18px;
+  padding-left: 44px;
   line-height: 1.5;
-  font-size: 1.25rem;
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
   color: #f0f7f2;
   text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.6);
 }
@@ -141,44 +157,39 @@ body {
   content: "";
   position: absolute;
   left: 0;
-  top: 3px;
-  width: 36px;
-  height: 36px;
+  top: 2px;
+  width: 34px;
+  height: 34px;
   background: url("img/chulo.png") no-repeat center/contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-/* Texto de scroll */
+/* Scroll hint (UNIFICADO: solo una definición) */
 .scroll-hint {
   color: #fff;
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
   text-align: center;
-  margin-top: 30px;
+ margin-top: -5px;  
+ font-weight: 700;
   margin-bottom: 0;
-  opacity: 0.9;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  opacity: 0.95;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.65);
   animation: bounce 2s infinite;
   position: relative;
   z-index: 3;
 }
 
 @keyframes bounce {
-
   0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(8px);
-  }
+  100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 }
 
 /* =========================
    Formulario + Slider
    ========================= */
 .container.form-shell {
-  margin: -150px auto 0;
+  margin: -120px auto 0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -195,9 +206,7 @@ body {
   background: var(--white);
   box-shadow: var(--shadow-lg);
   height: 600px;
-  /* altura base */
   transition: height 0.4s ease;
-  /* transición suave al cambiar altura */
 }
 
 /* Cuando el campo empresa está visible, aumentar altura */
@@ -398,7 +407,6 @@ button:active {
   transform: translateY(1px) scale(.995);
 }
 
-
 /* FONDO A ANCHO COMPLETO */
 .promocion-bg {
   margin-top: 60px;
@@ -410,7 +418,6 @@ button:active {
   background-repeat: no-repeat;
   padding: 80px 0;
 }
-
 
 .promocion {
   width: min(1180px, 92vw);
@@ -426,7 +433,6 @@ button:active {
   width: 100%;
   display: block;
 }
-
 
 .contenido {
   width: min(1180px, 92vw);
@@ -445,7 +451,7 @@ button:active {
 
 .bloque p {
   color: #374151;
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .bloque-temario {
@@ -467,6 +473,7 @@ button:active {
   position: relative;
   padding-left: 34px;
   margin-bottom: 10px;
+  font-size: 17px;
 }
 
 .temario-col li::before {
@@ -567,7 +574,6 @@ footer {
     opacity: 0;
     transform: translateY(25px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -592,13 +598,11 @@ footer {
   display: grid;
   place-items: center;
   background: rgba(17, 24, 39, .55);
-  /* overlay oscuro */
   backdrop-filter: blur(2px);
   opacity: 0;
   pointer-events: none;
   transition: opacity .25s ease;
   z-index: 9999;
-  /* siempre encima */
 }
 
 .alerta-modal.visible {
@@ -765,23 +769,20 @@ footer {
 
   /* Hero un poco más compacto */
   .hero {
-    height: 70vh;
+    min-height: 70vh;
     padding: 40px 0;
   }
 
-  .hero-content h1 {
+  .hero-content {
+    padding: 46px 16px 38px;
+  }
+
+  .hero-title {
     font-size: clamp(1.6rem, 3vw, 2.3rem);
   }
 
-  .hero-content p {
-    margin-top: -80px;
-    margin-bottom: 18px;
+  .hero-kicker {
     font-size: 1.2rem;
-  }
-
-  .hero-benefits {
-    max-width: 90%;
-    font-size: 0.95rem;
   }
 
   /* Form shell más adaptable */
@@ -817,23 +818,21 @@ footer {
 
   /* Hero más alto y cómodo en móvil */
   .hero {
-    height: auto;
     min-height: 80vh;
     padding: 60px 0 40px;
   }
 
   .hero-content {
-    padding: 0 16px;
+    padding: 54px 14px 38px;
+    gap: 14px;
   }
 
-  .hero-content p {
-    margin-top: -20px;
-    margin-bottom: 16px;
-    font-size: 1.05rem;
-  }
-
-  .hero-content h1 {
+  .hero-title {
     font-size: 1.5rem;
+  }
+
+  .hero-kicker {
+    font-size: 1.05rem;
   }
 
   .hero-benefits li {
@@ -844,6 +843,7 @@ footer {
   .hero-benefits li::before {
     width: 22px;
     height: 22px;
+    top: 3px;
   }
 
   /* FORMULARIO: columna, full width */
@@ -855,11 +855,9 @@ footer {
   .form-shell {
     flex-direction: column;
     height: auto !important;
-    /* Altura automática en móvil para mostrar todo el contenido */
     min-height: auto;
   }
 
-  /* Desactivar la expansión fija en móvil, usar altura automática */
   .form-shell.expanded {
     height: auto !important;
   }
@@ -872,10 +870,8 @@ footer {
 
   .form-shell .left {
     min-height: 400px;
-    /* Altura aumentada para visualización completa de la imagen */
     padding: 28px 20px;
     background-size: cover;
-    /* Asegurar que la imagen cubra todo */
     background-position: center center;
   }
 
@@ -885,7 +881,6 @@ footer {
 
   .form-shell .right {
     padding: 28px 20px 32px;
-    /* Más padding para mejor visualización */
   }
 
   .form-shell form {
@@ -907,10 +902,8 @@ footer {
 
   .bloque-temario {
     grid-template-columns: 1fr;
-    /* Temario a una columna */
   }
 
-  /* Conferencistas: una sola columna */
   .cards-conferencistas {
     grid-template-columns: 1fr;
   }
@@ -919,17 +912,14 @@ footer {
     height: 260px;
   }
 
-  /* Inversión más pequeño en móvil */
   .inversion p {
     font-size: 2rem;
   }
 
-  /* Video full width con menos radio */
   .video-container {
     border-radius: 16px;
   }
 
-  /* Google Reviews */
   #comentarios-google {
     width: 94vw;
     padding: 30px 10px;
@@ -939,7 +929,6 @@ footer {
     font-size: 1.4rem;
   }
 
-  /* Footer móvil */
   .footer {
     text-align: center;
     padding: 40px 16px 30px;
@@ -971,11 +960,11 @@ footer {
 /* ====== MÓVIL PEQUEÑO ====== */
 @media (max-width: 480px) {
 
-  .hero-content h1 {
+  .hero-title {
     font-size: 1.3rem;
   }
 
-  .hero-content p {
+  .hero-kicker {
     font-size: 0.95rem;
   }
 
@@ -985,7 +974,6 @@ footer {
 
   .form-shell .left {
     min-height: 360px;
-    /* Altura aumentada para móviles pequeños */
     background-size: cover;
     background-position: center center;
   }
@@ -1119,7 +1107,6 @@ footer {
   display: -webkit-box;
   -webkit-line-clamp: 4;
   line-clamp: 4;
-  /* Propiedad estándar para compatibilidad */
   -webkit-box-orient: vertical;
 }
 
@@ -1160,13 +1147,8 @@ footer {
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Responsive para reviews */
@@ -1242,7 +1224,6 @@ footer {
 .video-wrapper {
   position: relative;
   padding-bottom: 56.25%;
-  /* Aspect ratio 16:9 */
   height: 0;
   overflow: hidden;
   background: #000;
