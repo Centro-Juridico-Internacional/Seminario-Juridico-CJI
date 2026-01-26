@@ -1354,3 +1354,20 @@ center h2,
 html, body{
   overflow-x: hidden;
 }
+
+
+/* =========================
+   FIX CENTRADO HERO EN PANTALLAS GRANDES
+   ========================= */
+
+/* En desktop y pantallas grandes: centrar verticalmente */
+.hero{
+  place-items: center !important;
+}
+
+/* Ajuste fino para pantallas MUY grandes (4K, monitores altos) */
+@media (min-width: 1400px){
+  .hero-content{
+    padding-top: 40px;
+  }
+}
