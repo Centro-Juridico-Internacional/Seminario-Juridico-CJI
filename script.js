@@ -102,63 +102,71 @@ document.addEventListener('DOMContentLoaded', () => {
   if (inputTelefono) inputTelefono.required = true;
   if (tipoPersona) tipoPersona.required = true;
 
-  function actualizarPrecio() {
-    let precio = null;
+function actualizarPrecio() {
+  let precio = null;
 
-    if (tipoPersona && tipoPersona.value === 'natural') {
-      // Oculta ubicación (según tu lógica original)
-      if (campoUbicacion) campoUbicacion.classList.add('oculto');
-      if (ubicacion) ubicacion.removeAttribute('required');
+  // ✅ NUEVOS PRECIOS
+  const PRECIO_NATURAL = 356346;
+  const PRECIO_BOGOTA = 320813;
+  const PRECIO_FUERA  = 323406;
 
-      // Oculta empresa y limpia
-      if (campoEmpresa) {
-        campoEmpresa.classList.remove('mostrar');
-        campoEmpresa.classList.add('hidden');
-        campoEmpresa.classList.remove('oculto');
-        campoEmpresa.setAttribute('aria-hidden', 'true');
-      }
-      if (inputEmpresa) {
-        inputEmpresa.removeAttribute('required');
-        inputEmpresa.value = '';
-      }
+  if (tipoPersona && tipoPersona.value === 'natural') {
+    // Oculta ubicación
+    if (campoUbicacion) campoUbicacion.classList.add('oculto');
+    if (ubicacion) ubicacion.removeAttribute('required');
+    if (ubicacion) ubicacion.value = ""; // opcional: limpia selección
 
-      const formShell = document.querySelector('.form-shell');
-      if (formShell) formShell.classList.remove('expanded');
-
-      precio = 846983;
-
-    } else if (tipoPersona && tipoPersona.value === 'empresa') {
-      // Muestra ubicación
-      if (campoUbicacion) campoUbicacion.classList.remove('oculto');
-      if (ubicacion) ubicacion.setAttribute('required', 'required');
-
-      // Muestra empresa
-      if (campoEmpresa) {
-        campoEmpresa.classList.add('mostrar');
-        campoEmpresa.classList.remove('hidden', 'oculto');
-        campoEmpresa.setAttribute('aria-hidden', 'false');
-      }
-      if (inputEmpresa) inputEmpresa.setAttribute('required', 'required');
-
-      const formShell = document.querySelector('.form-shell');
-      if (formShell) formShell.classList.add('expanded');
-
-      if (ubicacion) {
-        if (ubicacion.value === 'bogota') precio = 763000;
-        else if (ubicacion.value === 'fuera') precio = 769000;
-      }
+    // Oculta empresa y limpia
+    if (campoEmpresa) {
+      campoEmpresa.classList.remove('mostrar');
+      campoEmpresa.classList.add('hidden');
+      campoEmpresa.classList.remove('oculto');
+      campoEmpresa.setAttribute('aria-hidden', 'true');
+    }
+    if (inputEmpresa) {
+      inputEmpresa.removeAttribute('required');
+      inputEmpresa.value = '';
     }
 
-    if (precio !== null) {
-      precioTexto.textContent = `Precio: $${precio.toLocaleString('es-CO')}`;
-      btnPayu.textContent = `Pagar $${precio.toLocaleString('es-CO')} con PayU (Sandbox)`;
-      btnPayu.dataset.valor = String(precio);
-    } else {
-      precioTexto.textContent = '';
-      btnPayu.textContent = 'Separar mi cupo';
-      btnPayu.dataset.valor = '';
+    const formShell = document.querySelector('.form-shell');
+    if (formShell) formShell.classList.remove('expanded');
+
+    precio = PRECIO_NATURAL;
+
+  } else if (tipoPersona && tipoPersona.value === 'empresa') {
+    // Muestra ubicación
+    if (campoUbicacion) campoUbicacion.classList.remove('oculto');
+    if (ubicacion) ubicacion.setAttribute('required', 'required');
+
+    // Muestra empresa
+    if (campoEmpresa) {
+      campoEmpresa.classList.add('mostrar');
+      campoEmpresa.classList.remove('hidden', 'oculto');
+      campoEmpresa.setAttribute('aria-hidden', 'false');
+    }
+    if (inputEmpresa) inputEmpresa.setAttribute('required', 'required');
+
+    const formShell = document.querySelector('.form-shell');
+    if (formShell) formShell.classList.add('expanded');
+
+    // ✅ Precio por ubicación
+    if (ubicacion) {
+      if (ubicacion.value === 'bogota') precio = PRECIO_BOGOTA;
+      else if (ubicacion.value === 'fuera') precio = PRECIO_FUERA;
     }
   }
+
+  if (precio !== null) {
+    precioTexto.textContent = `Precio: $${precio.toLocaleString('es-CO')}`;
+    btnPayu.textContent = `Pagar $${precio.toLocaleString('es-CO')} con PayU (Sandbox)`;
+    btnPayu.dataset.valor = String(precio);
+  } else {
+    precioTexto.textContent = '';
+    btnPayu.textContent = 'Separar mi cupo';
+    btnPayu.dataset.valor = '';
+  }
+}
+
 
   tipoPersona?.addEventListener('change', actualizarPrecio);
   ubicacion?.addEventListener('change', actualizarPrecio);

@@ -107,7 +107,7 @@ body {
   font-size: 1.5rem;
   margin: -150px 0 26px;
   color: #f0f7f2;
-  opacity: 0.95;
+  
 }
 
 /* ✔️ Bullets del hero */
@@ -124,7 +124,7 @@ body {
   padding-left: 42px;
   margin-bottom: 18px;
   line-height: 1.5;
-  font-size: 2rem;
+  font-size: 1rem;
   color: #f0f7f2;
 }
 
