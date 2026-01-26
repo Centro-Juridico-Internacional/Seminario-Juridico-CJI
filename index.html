@@ -57,7 +57,7 @@
         <p class="sub">Déjanos tus datos y te contactaremos</p>
 
         <form id="formulario" autocomplete="off">
-          
+
           <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre completo" required>
           <input type="email" id="correo" name="correo" placeholder="Ingrese su correo electrónico" required>
           <input type="email" id="confirmarCorreo" name="confirmarCorreo" placeholder="Confirme su correo electrónico"
@@ -92,6 +92,10 @@
 
           <button type="button" id="btnPayu">Pagar con PayU (Sandbox)</button>
         </form>
+
+        <!-- ✅ FORM OCULTO PARA PAYU (OBLIGATORIO PARA TU JS) -->
+        <form id="formPayu" style="display:none;"></form>
+
       </div>
     </div>
   </section>
@@ -110,19 +114,13 @@
       <p style="text-align: justify;">
         En este seminario práctico, nuestros expertos asesores empresariales le darán a conocer las nuevas leyes, decretos y jurisprudencia que afecta las relaciones laborales para el 2026 y su obligatorio cumplimiento, evite multas y sanciones por parte de la UGPP y del Ministerio de Trabajo en temas tales como:
 
-<br><br> protocolos de contratación laboral general.
-
-<br><br>Formularios adicionales al contrato de trabajo.
-
-<br><br>Peligros de la disposición y disponibilidad laboral.
-
-<br><br>Contratos en misión y límites de la contratación con empresas de servicios temporales.
-
-<br><br>Pactos de tiempo, exclusividad y privación.
-
-<br><br>Nuevas pautas en derechos de autor entre trabajadores y la empresa.
-
-<br><br>Haciendo énfasis en la implementación de modelos de protección de datos, límites de los préstamos y libranzas laborales, modelos y formatos para la contratación, nuevas conductas sancionables por el Ministerio de Trabajo, los límites y cambios en la tercerización laboral, la contratación de funcionarios en misión y sus derechos laborales, temas que se exponen con la utilización de casuística y ejemplos prácticos, en lenguaje dirigido a no abogados.
+        <br><br> protocolos de contratación laboral general.
+        <br><br>Formularios adicionales al contrato de trabajo.
+        <br><br>Peligros de la disposición y disponibilidad laboral.
+        <br><br>Contratos en misión y límites de la contratación con empresas de servicios temporales.
+        <br><br>Pactos de tiempo, exclusividad y privación.
+        <br><br>Nuevas pautas en derechos de autor entre trabajadores y la empresa.
+        <br><br>Haciendo énfasis en la implementación de modelos de protección de datos, límites de los préstamos y libranzas laborales, modelos y formatos para la contratación, nuevas conductas sancionables por el Ministerio de Trabajo, los límites y cambios en la tercerización laboral, la contratación de funcionarios en misión y sus derechos laborales, temas que se exponen con la utilización de casuística y ejemplos prácticos, en lenguaje dirigido a no abogados.
       </p>
     </div>
 
@@ -157,9 +155,6 @@
           <li>Obligación de reportes de eventuales riesgos laborales y la responsabilidad objetiva del empleador.</li>
           <li>Requisitos y procedimiento para el pacto no constitutivo de salario.</li>
           <li>Conozca y establezca la nueva documentación necesaria para la contratación de trabajadores.</li>
-         
-
-          <!-- resto igual -->
         </ul>
       </div>
 
@@ -191,7 +186,6 @@
           <li>Manejo y recomendaciones para la estipulación del periodo de prueba en los contratos laborales</li>
           <li>Régimen disciplinario y límites en la culminación de contratos de trabajo.</li>
           <li>Documentos que protegen a la empresa y que deben ser solicitados al inicio de la relación laboral.</li>
-          <!-- resto igual -->
         </ul>
       </div>
     </div>
@@ -240,12 +234,10 @@
     </div>
   </section>
 
+  <!-- Elfsight Google Reviews | comentarios -->
+  <script src="https://elfsightcdn.com/platform.js" async></script>
+  <div class="elfsight-app-2cb0a639-a095-4102-9d2c-5a06678823a8" data-elfsight-app-lazy></div>
 
-<!-- Elfsight Google Reviews | comentarios -->
-<script src="https://elfsightcdn.com/platform.js" async></script>
-<div class="elfsight-app-2cb0a639-a095-4102-9d2c-5a06678823a8" data-elfsight-app-lazy></div>
-
-  
   <!-- AFILIADOS -->
   <section class="afiliados-section">
     <div class="afiliados-container">
@@ -264,17 +256,14 @@
   </section>
 
   <!-- Footer remoto -->
-<div id="cji-shared-footer-container-2"></div>
-<script src="https://pagina-principal-cji.vercel.app/footer-loader.js"></script>
+  <div id="cji-shared-footer-container-2"></div>
+  <script src="https://pagina-principal-cji.vercel.app/footer-loader.js"></script>
 
-<!-- ✅ CryptoJS: SIN defer para garantizar disponibilidad -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+  <!-- ✅ CryptoJS: SIN defer para garantizar disponibilidad -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
-<!-- ✅ Tu lógica -->
-<script src="script.js" defer></script>
-
-
-  
+  <!-- ✅ Tu lógica -->
+  <script src="script.js" defer></script>
 
 </body>
 </html>
