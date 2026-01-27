@@ -308,9 +308,9 @@ function actualizarPrecio() {
       }
 
       // ⚠️ En producción NO expongas apiKey en frontend. Para Sandbox está ok.
-      const apiKey = '4Vj8eK4rloUd272L48hsrarnUA';
-      const merchantId = '508029';
-      const accountId = '512321';
+      const apiKey = '136c14f4483';
+      const merchantId = '83469';
+      const accountId = '87502';
       const currency = 'COP';
 
       const amount = Number(valor).toFixed(2);
@@ -327,7 +327,7 @@ function actualizarPrecio() {
       }
 
       payuForm.setAttribute('method', 'POST');
-      payuForm.setAttribute('action', 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/');
+      payuForm.setAttribute('action', 'https://checkout.payulatam.com/ppp-web-gateway-payu/');
       payuForm.setAttribute('target', '_top');
 
       // Campos PayU
@@ -341,7 +341,8 @@ function actualizarPrecio() {
       ensureHiddenInput(payuForm, 'currency').value = currency;
       ensureHiddenInput(payuForm, 'signature', 'signature').value = signature;
       ensureHiddenInput(payuForm, 'buyerEmail', 'buyerEmail').value = correoRaw;
-      ensureHiddenInput(payuForm, 'test', 'test').value = '1';
+      ensureHiddenInput(payuForm, 'test', 'test').value = '0';
+
 
       // ✅ extra1 = tipo
       ensureHiddenInput(payuForm, 'extra1', 'extra1').value = limit255(tipo);
@@ -378,7 +379,7 @@ function actualizarPrecio() {
       payuForm.appendChild(ex5);
 
       // URLs Apps Script
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0QycjpxKZb4IBOsP13aOAxEwbEUW_x66MZ81QofwY5fOil1-NfsR99dlFYgvJyxCw/exec';
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfHqlMkOutJSsZrqIOhrv66xCWzm2NHpGv9SMEktWp_xxCZtRWUX488wGzS8d5vnsB/exec';
 
       // Solo vendedor + referencia
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
