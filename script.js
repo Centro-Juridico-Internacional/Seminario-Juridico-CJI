@@ -158,7 +158,7 @@ function actualizarPrecio() {
 
   if (precio !== null) {
     precioTexto.textContent = `Precio: $${precio.toLocaleString('es-CO')}`;
-    btnPayu.textContent = `Pagar $${precio.toLocaleString('es-CO')} con PayU (Sandbox)`;
+      btnPayu.textContent = 'Separar mi cupo';
     btnPayu.dataset.valor = String(precio);
   } else {
     precioTexto.textContent = '';
