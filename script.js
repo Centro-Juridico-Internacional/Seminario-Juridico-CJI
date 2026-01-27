@@ -379,7 +379,7 @@ function actualizarPrecio() {
       payuForm.appendChild(ex5);
 
       // URLs Apps Script
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfHqlMkOutJSsZrqIOhrv66xCWzm2NHpGv9SMEktWp_xxCZtRWUX488wGzS8d5vnsB/exec';
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzN5m4Yus39xRx08C3vA2LOoMd_jqNl7fTVoJPd0rMgwazDxYXh2iMnLXyqA-pJ7M8L/exec';
 
       // Solo vendedor + referencia
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
