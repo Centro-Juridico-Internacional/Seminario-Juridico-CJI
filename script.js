@@ -102,76 +102,69 @@ document.addEventListener('DOMContentLoaded', () => {
   if (inputTelefono) inputTelefono.required = true;
   if (tipoPersona) tipoPersona.required = true;
 
-function actualizarPrecio() {
-  let precio = null;
+  function actualizarPrecio() {
+    let precio = null;
 
-  // ✅ NUEVOS PRECIOS
-  const PRECIO_NATURAL = 356346;
-  const PRECIO_BOGOTA = 320813;
-  const PRECIO_FUERA  = 323406;
+    // ✅ NUEVOS PRECIOS
+    const PRECIO_NATURAL = 356346;
+    const PRECIO_BOGOTA = 320813;
+    const PRECIO_FUERA  = 323406;
 
-  if (tipoPersona && tipoPersona.value === 'natural') {
-    // Oculta ubicación
-    if (campoUbicacion) campoUbicacion.classList.add('oculto');
-    if (ubicacion) ubicacion.removeAttribute('required');
-    if (ubicacion) ubicacion.value = ""; // opcional: limpia selección
+    if (tipoPersona && tipoPersona.value === 'natural') {
+      if (campoUbicacion) campoUbicacion.classList.add('oculto');
+      if (ubicacion) ubicacion.removeAttribute('required');
+      if (ubicacion) ubicacion.value = "";
 
-    // Oculta empresa y limpia
-    if (campoEmpresa) {
-      campoEmpresa.classList.remove('mostrar');
-      campoEmpresa.classList.add('hidden');
-      campoEmpresa.classList.remove('oculto');
-      campoEmpresa.setAttribute('aria-hidden', 'true');
+      if (campoEmpresa) {
+        campoEmpresa.classList.remove('mostrar');
+        campoEmpresa.classList.add('hidden');
+        campoEmpresa.classList.remove('oculto');
+        campoEmpresa.setAttribute('aria-hidden', 'true');
+      }
+      if (inputEmpresa) {
+        inputEmpresa.removeAttribute('required');
+        inputEmpresa.value = '';
+      }
+
+      const formShell = document.querySelector('.form-shell');
+      if (formShell) formShell.classList.remove('expanded');
+
+      precio = PRECIO_NATURAL;
+
+    } else if (tipoPersona && tipoPersona.value === 'empresa') {
+      if (campoUbicacion) campoUbicacion.classList.remove('oculto');
+      if (ubicacion) ubicacion.setAttribute('required', 'required');
+
+      if (campoEmpresa) {
+        campoEmpresa.classList.add('mostrar');
+        campoEmpresa.classList.remove('hidden', 'oculto');
+        campoEmpresa.setAttribute('aria-hidden', 'false');
+      }
+      if (inputEmpresa) inputEmpresa.setAttribute('required', 'required');
+
+      const formShell = document.querySelector('.form-shell');
+      if (formShell) formShell.classList.add('expanded');
+
+      if (ubicacion) {
+        if (ubicacion.value === 'bogota') precio = PRECIO_BOGOTA;
+        else if (ubicacion.value === 'fuera') precio = PRECIO_FUERA;
+      }
     }
-    if (inputEmpresa) {
-      inputEmpresa.removeAttribute('required');
-      inputEmpresa.value = '';
-    }
 
-    const formShell = document.querySelector('.form-shell');
-    if (formShell) formShell.classList.remove('expanded');
-
-    precio = PRECIO_NATURAL;
-
-  } else if (tipoPersona && tipoPersona.value === 'empresa') {
-    // Muestra ubicación
-    if (campoUbicacion) campoUbicacion.classList.remove('oculto');
-    if (ubicacion) ubicacion.setAttribute('required', 'required');
-
-    // Muestra empresa
-    if (campoEmpresa) {
-      campoEmpresa.classList.add('mostrar');
-      campoEmpresa.classList.remove('hidden', 'oculto');
-      campoEmpresa.setAttribute('aria-hidden', 'false');
-    }
-    if (inputEmpresa) inputEmpresa.setAttribute('required', 'required');
-
-    const formShell = document.querySelector('.form-shell');
-    if (formShell) formShell.classList.add('expanded');
-
-    // ✅ Precio por ubicación
-    if (ubicacion) {
-      if (ubicacion.value === 'bogota') precio = PRECIO_BOGOTA;
-      else if (ubicacion.value === 'fuera') precio = PRECIO_FUERA;
-    }
-  }
-
-  if (precio !== null) {
-    precioTexto.textContent = `Precio: $${precio.toLocaleString('es-CO')}`;
+    if (precio !== null) {
+      precioTexto.textContent = `Precio: $${precio.toLocaleString('es-CO')}`;
       btnPayu.textContent = 'Separar mi cupo';
-    btnPayu.dataset.valor = String(precio);
-  } else {
-    precioTexto.textContent = '';
-    btnPayu.textContent = 'Separar mi cupo';
-    btnPayu.dataset.valor = '';
+      btnPayu.dataset.valor = String(precio);
+    } else {
+      precioTexto.textContent = '';
+      btnPayu.textContent = 'Separar mi cupo';
+      btnPayu.dataset.valor = '';
+    }
   }
-}
-
 
   tipoPersona?.addEventListener('change', actualizarPrecio);
   ubicacion?.addEventListener('change', actualizarPrecio);
 
-  // Estado inicial campo empresa
   if (tipoPersona?.value === 'empresa') {
     campoEmpresa?.classList.add('mostrar');
     campoEmpresa?.classList.remove('hidden', 'oculto');
@@ -187,7 +180,6 @@ function actualizarPrecio() {
   actualizarPrecio();
 
   // =================== VENDEDOR POR URL ===================
-  // URL: https://tudominio.com/landing.html?vendedor=123
   function detectVendedorFromURL() {
     const params = new URLSearchParams(window.location.search || '');
     const v = (params.get('vendedor') || '').trim();
@@ -259,11 +251,23 @@ function actualizarPrecio() {
     return true;
   }
 
-  // ✅ Anti doble click / doble submit (y re-habilita si falla)
+  // ✅ Anti doble click / doble submit
   let pagando = false;
 
+  // =================== CONFIG (EDITA SOLO ESTO) ===================
+  // ✅ 1) URL /exec de tu Apps Script (la misma que responde PONG OK)
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOOadxk89t-hV2Q2NRa46Ei7hU7GmCepo7XaoEo8TSaG97CNOBZl8ZU_ODWm_yiY4V/exec';
+
+  // ✅ 2) IDs de tu comercio (estos pueden quedar en frontend)
+  const merchantId = '83469';
+  const accountId  = '87502';
+  const currency   = 'COP';
+
+  // ✅ 3) Endpoint de producción PayU
+  const PAYU_ACTION = 'https://checkout.payulatam.com/ppp-web-gateway-payu/';
+
   // =================== PAGO PAYU ===================
-  btnPayu?.addEventListener('click', () => {
+  btnPayu?.addEventListener('click', async () => {
     try {
       if (pagando) return;
       pagando = true;
@@ -291,33 +295,34 @@ function actualizarPrecio() {
 
       const formData = new FormData(form);
 
-      // ✅ RAW (los reales)
       const empresaRaw = (formData.get('empresa') || '').toString().trim();
-      const correoRaw = (formData.get('correo') || '').toString().trim();
+      const correoRaw  = (formData.get('correo') || '').toString().trim();
       const telefonoRaw = (formData.get('telefono') || '').toString().trim();
-      const personaRaw = (formData.get('nombre') || '').toString().trim();
+      const personaRaw  = (formData.get('nombre') || '').toString().trim();
 
       const tipo = (tipoPersona?.value || '').toString().trim();
-      const ubi = (ubicacion?.value || 'N/A').toString().trim();
+      const ubi  = (ubicacion?.value || 'N/A').toString().trim();
       const vendedor = (inputVendedor?.value || idVendedor || 'sin_vendedor').toString().trim() || 'sin_vendedor';
 
-      if (typeof CryptoJS === 'undefined' || !CryptoJS.MD5) {
+      const amount = Number(valor).toFixed(2);
+      const referenceCode = `CJI_${Date.now()}_${vendedor}`;
+
+      // ✅ Pedir firma al Apps Script (NO expone API key)
+      const signUrl =
+        `${APPS_SCRIPT_URL}?signcheckout=1` +
+        `&merchantId=${encodeURIComponent(merchantId)}` +
+        `&referenceCode=${encodeURIComponent(referenceCode)}` +
+        `&amount=${encodeURIComponent(amount)}` +
+        `&currency=${encodeURIComponent(currency)}`;
+
+      const r = await fetch(signUrl, { method: 'GET' });
+      const j = await r.json();
+      if (!j || !j.signature) {
         pagando = false;
-        mostrarAlerta('No se pudo inicializar la librería de firma (CryptoJS). Revisa tu conexión.');
+        mostrarAlerta('No se pudo generar la firma. Revisa el Apps Script (signcheckout=1) y PAYU_API_KEY.');
         return;
       }
-
-      // ⚠️ En producción NO expongas apiKey en frontend. Para Sandbox está ok.
-      const apiKey = '136c14f4483';
-      const merchantId = '83469';
-      const accountId = '87502';
-      const currency = 'COP';
-
-      const amount = Number(valor).toFixed(2);
-
-      const referenceCode = `CJI_${Date.now()}_${vendedor}`;
-      const rawSignature = `${apiKey}~${merchantId}~${referenceCode}~${amount}~${currency}`;
-      const signature = CryptoJS.MD5(rawSignature).toString();
+      const signature = String(j.signature);
 
       const payuForm = document.getElementById('formPayu');
       if (!payuForm) {
@@ -327,8 +332,12 @@ function actualizarPrecio() {
       }
 
       payuForm.setAttribute('method', 'POST');
-      payuForm.setAttribute('action', 'https://checkout.payulatam.com/ppp-web-gateway-payu/');
+      payuForm.setAttribute('action', PAYU_ACTION);
       payuForm.setAttribute('target', '_top');
+
+      // Debug rápido (ver consola)
+      console.log('PayU action:', PAYU_ACTION);
+      console.log('PayU test:', '0');
 
       // Campos PayU
       ensureHiddenInput(payuForm, 'merchantId').value = merchantId;
@@ -341,14 +350,14 @@ function actualizarPrecio() {
       ensureHiddenInput(payuForm, 'currency').value = currency;
       ensureHiddenInput(payuForm, 'signature', 'signature').value = signature;
       ensureHiddenInput(payuForm, 'buyerEmail', 'buyerEmail').value = correoRaw;
-      ensureHiddenInput(payuForm, 'test', 'test').value = '0';
 
+      // ✅ PRODUCCIÓN
+      ensureHiddenInput(payuForm, 'test', 'test').value = '0';
 
       // ✅ extra1 = tipo
       ensureHiddenInput(payuForm, 'extra1', 'extra1').value = limit255(tipo);
 
-      // ✅ extra2 = PAQUETE (esto sí llega a tu Apps Script)
-      // u=ubicacion|v=vendedor|tel=telefono|emp=empresa
+      // ✅ extra2 pack u/v/tel/emp
       const empVal = (tipo === 'empresa') ? empresaRaw : '';
       const extra2Pack = `u=${ubi}|v=${vendedor}|tel=${telefonoRaw}|emp=${empVal}`;
       ensureHiddenInput(payuForm, 'extra2', 'extra2').value = limit255(extra2Pack);
@@ -358,14 +367,14 @@ function actualizarPrecio() {
         payuForm.querySelectorAll(`input[name="${name}"]`).forEach((el) => el.remove());
       });
 
-      // ✅ extra3 = NOMBRE (ya confirmado que llega)
+      // ✅ extra3 = NOMBRE
       const ex3 = document.createElement('input');
       ex3.type = 'hidden';
       ex3.name = 'extra3';
       ex3.value = limit255(personaRaw);
       payuForm.appendChild(ex3);
 
-      // (Opcional) Igual enviamos extra4/extra5 por si PayU los reenvía
+      // (Opcional) extra4/extra5
       const ex4 = document.createElement('input');
       ex4.type = 'hidden';
       ex4.name = 'extra4';
@@ -378,12 +387,8 @@ function actualizarPrecio() {
       ex5.value = limit255(empVal);
       payuForm.appendChild(ex5);
 
-      // URLs Apps Script
-      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzN5m4Yus39xRx08C3vA2LOoMd_jqNl7fTVoJPd0rMgwazDxYXh2iMnLXyqA-pJ7M8L/exec';
-
-      // Solo vendedor + referencia
+      // URLs Apps Script (response + confirmation)
       const qs = `?vendedor=${encodeURIComponent(vendedor)}&ref=${encodeURIComponent(referenceCode)}`;
-
       ensureHiddenInput(payuForm, 'responseUrl', 'responseUrl').value = `${APPS_SCRIPT_URL}${qs}`;
       ensureHiddenInput(payuForm, 'confirmationUrl', 'confirmationUrl').value = `${APPS_SCRIPT_URL}${qs}`;
 
