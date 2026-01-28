@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let precio = null;
 
     // ✅ NUEVOS PRECIOS
-    const PRECIO_NATURAL = 2000;
+    const PRECIO_NATURAL = 4000;
     const PRECIO_BOGOTA = 320813;
     const PRECIO_FUERA  = 323406;
 
