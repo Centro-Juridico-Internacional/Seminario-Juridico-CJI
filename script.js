@@ -180,11 +180,12 @@ document.addEventListener('DOMContentLoaded', () => {
   actualizarPrecio();
 
   // =================== VENDEDOR POR URL ===================
-  function detectVendedorFromURL() {
-    const params = new URLSearchParams(window.location.search || '');
-    const v = (params.get('vendedor') || '').trim();
-    return v || 'sin_vendedor';
-  }
+function detectVendedorFromURL() {
+  const params = new URLSearchParams(window.location.search || '');
+  const v = (params.get('adviser') || '').trim();
+  return v || 'sin_vendedor';
+}
+
 
   const idVendedor = detectVendedorFromURL();
   const inputVendedor = document.getElementById('vendedor');
