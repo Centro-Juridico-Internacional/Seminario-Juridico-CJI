@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Seminario Laboral 2025</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+</head>
+
+<body>
+
+  <!-- Encabezado -->
+  <header class="top-bar">
+    <div class="container">
+      <img src="img/logo.png" alt="logo">
+      <span class="pbx-numbers"><strong>PBX : 3142033549 - 3203620097 - 3174745153</strong></span>
+    </div>
+  </header>
+
+  <!-- ================= HERO LIMPIO ================= -->
+  <section class="hero" aria-label="Seminario laboral">
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <p class="hero-kicker">Seminario práctico para empresarios</p>
+
+      <h1 class="hero-title">
+        Cómo implementar las <span>nuevas normativas laborales 2025</span>
+      </h1>
+
+      <ul class="hero-benefits">
+        <li>Actualice el reglamento interno de la empresa con las normas de la Reforma Laboral y los nuevos decretos y circulares obligatorias expedidas por el Ministerio de Trabajo para su validez legal.</li>
+        <li>Conozca los 25 aspectos que el Ministerio de Trabajo verifica en sus visitas de inspección y control en todo el país, en su rol de Policía laboral.</li>
+        <li>¿Conoce los 72 puntos obligatorios que, de acuerdo con la Reforma Laboral, conceptos del Ministerio de Trabajo y la jurisprudencia, debe tener todo reglamento interno de trabajo?</li>
+      </ul>
+
+      <p class="scroll-hint">↓ Deslice hacia abajo para ver más información ↓</p>
+    </div>
+  </section>
+
+  <!-- ================= FORMULARIO ================= -->
+  <section>
+    <div class="container form-shell">
+      <div class="left">
+        <div class="dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <div class="right">
+        <h2>Inscríbase ya</h2>
+        <p class="sub">Déjanos tus datos y te contactaremos</p>
+
+        <form id="formulario" autocomplete="off">
+
+          <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre completo" required>
+          <input type="email" id="correo" name="correo" placeholder="Ingrese su correo electrónico" required>
+          <input type="email" id="confirmarCorreo" name="confirmarCorreo" placeholder="Confirme su correo electrónico"
+            required onpaste="return false;" ondrop="return false;" autocomplete="off">
+          <input type="tel" id="telefono" name="telefono" placeholder="Ingrese su número de celular" required>
+
+          <select id="tipoPersona" name="tipoPersona" required>
+            <option value="" disabled selected>Seleccione tipo de cliente</option>
+            <option value="natural">Persona natural</option>
+            <option value="empresa">Empresa</option>
+          </select>
+
+          <div id="campoEmpresa" class="hidden" aria-hidden="true">
+            <input type="text" id="empresa" name="empresa" placeholder="Ingrese el nombre de su empresa">
+          </div>
+
+          <div id="campoUbicacion">
+            <select id="ubicacion" name="ubicacion" required>
+              <option value="" disabled selected>Seleccione ubicación</option>
+              <option value="bogota">Bogotá</option>
+              <option value="fuera">Fuera de Bogotá</option>
+            </select>
+          </div>
+
+          <p id="precio" class="precio"></p>
+          <input type="hidden" id="vendedor" name="vendedor" value="sin_vendedor">
+
+          <div class="checkbox">
+            <input type="checkbox" id="politica" name="politica" required>
+            <label for="politica">Acepto la <a href="#" target="_blank" rel="noopener">política de privacidad</a></label>
+          </div>
+
+          <button type="button" id="btnPayu">Pagar con PayU (Sandbox)</button>
+        </form>
+
+        <!-- ✅ FORM OCULTO PARA PAYU (OBLIGATORIO PARA TU JS) -->
+        <form id="formPayu" style="display:none;"></form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMOCIÓN -->
+  <section class="promocion-bg">
+    <div class="promocion">
+      <img src="img/banner.jpeg" alt="Seminario 2025">
+    </div>
+  </section>
+
+  <center><h1>Qué aprenderá</h1></center>
+
+  <section class="contenido">
+    <div class="bloque">
+      <p style="text-align: justify;">
+        En este seminario práctico, nuestros expertos asesores empresariales le darán a conocer las nuevas leyes, decretos y jurisprudencia que afecta las relaciones laborales para el 2026 y su obligatorio cumplimiento, evite multas y sanciones por parte de la UGPP y del Ministerio de Trabajo en temas tales como:
+
+        <br><br> protocolos de contratación laboral general.
+        <br><br>Formularios adicionales al contrato de trabajo.
+        <br><br>Peligros de la disposición y disponibilidad laboral.
+        <br><br>Contratos en misión y límites de la contratación con empresas de servicios temporales.
+        <br><br>Pactos de tiempo, exclusividad y privación.
+        <br><br>Nuevas pautas en derechos de autor entre trabajadores y la empresa.
+        <br><br>Haciendo énfasis en la implementación de modelos de protección de datos, límites de los préstamos y libranzas laborales, modelos y formatos para la contratación, nuevas conductas sancionables por el Ministerio de Trabajo, los límites y cambios en la tercerización laboral, la contratación de funcionarios en misión y sus derechos laborales, temas que se exponen con la utilización de casuística y ejemplos prácticos, en lenguaje dirigido a no abogados.
+      </p>
+    </div>
+
+    <center><h1>Temario</h1></center>
+
+    <div class="bloque-temario">
+      <div class="temario-col">
+        <ul>
+          <li>Implemente las técnicas, documentos y procedimientos para atender las visitas del Ministerio de Trabajo con respecto al nuevo enfoque de inspectores especializados y las circulares expedidas en noviembre de 2026.</li>
+          <li>Actualización – Nuevos Requisitos, límites, procedimientos y protocolos.</li>
+          <li>Conozca el impacto de la Nueva Reforma laboral en materia de contratación, los plazos y vencimientos para la implementación de los cambios obligatorios</li>
+          <li>Nuevas reglas para el cálculo y ejecución de la reforma laboral.</li>
+          <li>Implemente a tiempo los 20 cambios obligatorios en la contratación laboral y desarrollo de relaciones laborales.</li>
+          <li>Nuevos parámetros para liquidación de nóminas, recargos, y descuentos.</li>
+          <li>Nuevos parámetros para la creación de contratos laborales.</li>
+          <li>Prevenga los impactos que traen las reformas para las empresas</li>
+          <li>Nuevos Cambios en contratos de Prestación de servicios y las nuevas obligaciones en seguridad social que deben cumplir las empresas.</li>
+          <li>Nuevos límites y jurisprudencias para el pacto de salarios y sus requisitos.</li>
+          <li>Nueva formulación y desarrollo de los contratos de trabajo según su forma o tiempo de contratación.</li>
+          <li>Conozca como adecuar los protocolos de discriminación</li>
+          <li>Nuevos parámetros de estabilidad legal reforzada.</li>
+          <li>Nuevos parámetros de las reformas en materia laboral.</li>
+          <li>Conozca los requisitos fundamentales para construcción y autoría de los 12 protocolos que debe tener la empresa previos a la contratación de personal y los documentos adicionales para una correcta contratación.</li>
+          <li>Blinde su empresa a tiempo.</li>
+          <li>Nuevos documentos y formatos propios de la contratación laboral</li>
+          <li>Elementos y requisitos de los contratos de prestación de servicios para mitigar riesgos de demandas.</li>
+          <li>Nuevos límites establecidos por la corte para los contratos a término fijo.</li>
+          <li>Prohibiciones de contratación legal por contratos diferentes a la modalidad laboral.</li>
+          <li>Actualice sus procesos y protocolos de contratación.</li>
+          <li>Manejo y límites de los pagos no constitutivos de salario, bonificaciones y pagos periódicos para evitar sanciones de la UGPP.</li>
+          <li>Lista de protocolos, reglamentos, y documentación requerida y con la que debe contar la empresa antes de la contratación.</li>
+          <li>Obligación de reportes de eventuales riesgos laborales y la responsabilidad objetiva del empleador.</li>
+          <li>Requisitos y procedimiento para el pacto no constitutivo de salario.</li>
+          <li>Conozca y establezca la nueva documentación necesaria para la contratación de trabajadores.</li>
+        </ul>
+      </div>
+
+      <div class="temario-col">
+        <ul>
+          <li>Modificación general de los profesiogramas conforme a las resoluciones 2025 del Ministerio de trabajo.</li>
+          <li>Prevenga los cambios que trajo la reforma laboral para la contratación en contratos a término fijo, obra y labor.</li>
+          <li>Nuevos límites y jurisprudencias para el pacto de salarios y sus requisitos.</li>
+          <li>Nuevos parámetros, técnicas y prohibiciones legales en contratación laboral y contratos de prestación de servicios.</li>
+          <li>Nuevos cambios en los procedimientos de medición de resultados de los trabajadores</li>
+          <li>“Prepare a su empresa para conforme a la reforma y decretos en materia laboral a tiempo”</li>
+          <li>Requisitos documentales y parámetros que deben cumplir los contratos laborales y los contratos de prestación de servicios en el año 2026.</li>
+          <li>Implementación correcta de la disminución de la jornada laboral y flexibilización de horarios.</li>
+          <li>Formalización y requisitos formales de los pagos no constitutivos de salario y su reporte ante la DIAN, y la UGPP.</li>
+          <li>Protocolos y manuales de procedimiento obligatorios para el empleador en el 2026.</li>
+          <li>Cómo construir los protocolos y manuales obligatorios para manejo del personal laboral.</li>
+
+          <center><h2>¿Se crearon nuevas formas de contratación?</h2></center>
+
+          <li>Nuevas reformas en contratación para el 2026: salario, pagos no constitutivos de salario, jornada laboral y demás.</li>
+          <li>Normatividad y límites de los contratos electrónicos, remotos y temporales</li>
+          <li>Nuevos límites para la utilización de contratos de obra o labor</li>
+          <li>Nueva reglamentación en la utilización de medios de comunicación tecnológicos, tales como el correo electrónico, Telegram, WhatsApp y otras plataformas.</li>
+          <li>Precauciones y reglas de trabajo extra por comunicación con el trabajador fuera del horario de trabajo.</li>
+          <li>Evite Errores legales en el proceso de selección de personal y sus alcances en la contratación en el sector privado.</li>
+          <li>Forma de perfeccionamiento de los pagos no salariales y su marco legal con respecto a visitas del Ministerio de Trabajo y la UGPP.</li>
+          <li>Nueva forma de celebrar contratos de trabajo.</li>
+          <li>Firma digital: requisitos legales</li>
+          <li>Manejo y recomendaciones para la estipulación del periodo de prueba en los contratos laborales</li>
+          <li>Régimen disciplinario y límites en la culminación de contratos de trabajo.</li>
+          <li>Documentos que protegen a la empresa y que deben ser solicitados al inicio de la relación laboral.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVERSIÓN -->
+  <section class="inversion">
+    <h1>Inversión:</h1>
+   <p class="precio-animado">$299.450 + IVA</p>
+  </section>
+
+  <section class="incluye">
+    <center><h1>Incluye</h1></center>
+  <div class="incluye-box">
+    <ul>
+      <li>Video completo del seminario</li>
+      <li>Memorias del seminario</li>
+      <li>Formatos y modelos prácticos</li>
+      <li>Certificado de asistencia</li>
+      <li>El día del seminario y durante todo el evento, se habilita un número de WhatsApp donde el participante podrá realizar todas las preguntas que tenga durante el seminario, las cuales las estará respondiendo seis abogados de nuestra empresa, esto sin límite de preguntas.</li>
+    </ul>
+  </div>
+</section>
+
+
+  <!-- VIDEO -->
+  <section class="video">
+    <div class="video-container">
+      <video controls autoplay muted loop>
+        <source src="video/video1.mp4" type="video/mp4">
+        Tu navegador no soporta videos en HTML5.
+      </video>
+    </div>
+  </section>
+
+  <center><h2>Nuestros Conferencistas</h2></center>
+
+  <section class="conferencistas">
+    <div class="cards-conferencistas">
+      <div class="card-conf">
+        <img src="img/conferencista1.png" alt="Conferencista 1">
+        <h3 text>DRA. MARÍA CAMILA PULGARÍN RAMÍREZ</h3>
+        <h4 text>Abogada especialista</h4>
+        <p style="text-align: justify">Abogada de la Universidad Colegio Mayor de Cundinamarca, especialización en Gerencia en Seguridad y Salud en el Trabajo de la misma Universidad. Estudios en Sagrilaft y programas de ética empresarial. Conferencista en actualización en derecho laboral, columnista de la Revista Actualidad Jurídica Empresarial, Abogada líder y miembro del comité legal del Centro Jurídico Internacional.</p>
+      </div>
+
+      <div class="card-conf">
+        <img src="img/conferencista2.jpeg" alt="Conferencista 2">
+        <h3>Dr. Alberto Mario Jaramillo Polo</h3>
+        <h4 text>Abogada especialista</h4>
+        <p style="text-align: justify">Abogado de la Universidad Católica de Colombia con especialización en Derecho del Trabajo y de la Seguridad Social de la misma universidad. Columnista de la Revista Actualidad Jurídica Empresarial, Director nacional del departamento legal de Centro Jurídico Internacional, experto en planeación legal corporativa.</p>
+      </div>
+
+      <div class="card-conf">
+        <img src="img/conferencista3.jpeg" alt="Conferencista 3">
+        <h3>Dr. Luis Alfonso Acevedo Prada</h3>
+        <h4 text>Abogada especialista</h4>
+        <p style="text-align: justify">Abogado experto en asesoramiento laboral empresarial, especialista en Derecho Comercial y tributario de la Universidad Católica de Colombia. • Catedrático universitario, conferencista y consultor en derecho laboral y comercial empresarial; Asesor en política de riesgos y planeación legal corporativa, columnista de la Revista Actualidad Jurídica Empresarial; autor de textos en materia de contratos. • Consultor legal de empresas a nivel nacional del sector privado y cooperativo. Miembro del Colegio de abogados de Nueva York, Director corporativo de Centro Jurídico Internacional y AC Colombian Lawyers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Elfsight Google Reviews | comentarios -->
+  <script src="https://elfsightcdn.com/platform.js" async></script>
+  <div class="elfsight-app-2cb0a639-a095-4102-9d2c-5a06678823a8" data-elfsight-app-lazy></div>
+
+  <!-- AFILIADOS -->
+  <section class="afiliados-section">
+    <div class="afiliados-container">
+      <h2>Nuestros Afiliados nos Recomiendan</h2>
+      <p class="afiliados-subtitle">Conoce las experiencias de quienes confían en nosotros</p>
+
+      <div class="videos-grid">
+        <div class="video-item"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/bbPaKP656Rw" allowfullscreen></iframe></div></div>
+        <div class="video-item"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/J1DN3vIB5pI" allowfullscreen></iframe></div></div>
+        <div class="video-item"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/sraEuSH8pv0" allowfullscreen></iframe></div></div>
+        <div class="video-item"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/N78vHdH33C4" allowfullscreen></iframe></div></div>
+        <div class="video-item"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/I7jDvOYnsO0" allowfullscreen></iframe></div></div>
+        <div class="video-item"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/tiAxFXz2Iy8" allowfullscreen></iframe></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer remoto -->
+  <div id="cji-shared-footer-container-2"></div>
+  <script src="https://pagina-principal-cji.vercel.app/footer-loader.js"></script>
+
+  <!-- ✅ CryptoJS: SIN defer para garantizar disponibilidad -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+  <!-- ✅ Tu lógica -->
+  <script src="script.js" defer></script>
+
+</body>
+</html>
