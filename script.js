@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ✅ NUEVOS PRECIOS
     const PRECIO_NATURAL = 356346;
     const PRECIO_BOGOTA = 320813;
-    const PRECIO_FUERA  = 323406;
+    const PRECIO_FUERA = 323406;
 
     if (tipoPersona && tipoPersona.value === 'natural') {
       if (campoUbicacion) campoUbicacion.classList.add('oculto');
@@ -180,11 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
   actualizarPrecio();
 
   // =================== VENDEDOR POR URL ===================
-function detectVendedorFromURL() {
-  const params = new URLSearchParams(window.location.search || '');
-  const v = (params.get('adviser') || '').trim();
-  return v || 'sin_vendedor';
-}
+  function detectVendedorFromURL() {
+    const params = new URLSearchParams(window.location.search || '');
+    const v = (params.get('adviser') || '').trim();
+    return v || 'sin_vendedor';
+  }
 
 
   const idVendedor = detectVendedorFromURL();
@@ -257,12 +257,12 @@ function detectVendedorFromURL() {
 
   // =================== CONFIG (EDITA SOLO ESTO) ===================
   // ✅ 1) URL /exec de tu Apps Script (la misma que responde PONG OK)
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOOadxk89t-hV2Q2NRa46Ei7hU7GmCepo7XaoEo8TSaG97CNOBZl8ZU_ODWm_yiY4V/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7Mdgb7DGjdc1obKM5b6H7Sk4oNlSG3EJ-Sgb2EsrV6lmQnRQ5o6xj9oTsS6lhmqkS/exec';
 
   // ✅ 2) IDs de tu comercio (estos pueden quedar en frontend)
   const merchantId = '83469';
-  const accountId  = '87502';
-  const currency   = 'COP';
+  const accountId = '87502';
+  const currency = 'COP';
 
   // ✅ 3) Endpoint de producción PayU
   const PAYU_ACTION = 'https://checkout.payulatam.com/ppp-web-gateway-payu/';
@@ -297,12 +297,12 @@ function detectVendedorFromURL() {
       const formData = new FormData(form);
 
       const empresaRaw = (formData.get('empresa') || '').toString().trim();
-      const correoRaw  = (formData.get('correo') || '').toString().trim();
+      const correoRaw = (formData.get('correo') || '').toString().trim();
       const telefonoRaw = (formData.get('telefono') || '').toString().trim();
-      const personaRaw  = (formData.get('nombre') || '').toString().trim();
+      const personaRaw = (formData.get('nombre') || '').toString().trim();
 
       const tipo = (tipoPersona?.value || '').toString().trim();
-      const ubi  = (ubicacion?.value || 'N/A').toString().trim();
+      const ubi = (ubicacion?.value || 'N/A').toString().trim();
       const vendedor = (inputVendedor?.value || idVendedor || 'sin_vendedor').toString().trim() || 'sin_vendedor';
       const empVal = (tipo === 'empresa') ? empresaRaw : '';
 
@@ -310,7 +310,7 @@ function detectVendedorFromURL() {
 
       // ========== PASO 1: Registrar inscripción (PRE-PAGO) ==========
       console.log('[Inscripción] Enviando datos al servidor...');
-      
+
       const inscripcionData = new URLSearchParams();
       inscripcionData.append('inscripcion', '1');
       inscripcionData.append('nombre', personaRaw);
@@ -329,7 +329,7 @@ function detectVendedorFromURL() {
       });
 
       const inscripcionResult = await inscripcionResponse.json();
-      
+
       if (!inscripcionResult || !inscripcionResult.ok || !inscripcionResult.referenceCode) {
         pagando = false;
         console.error('[Inscripción] Error:', inscripcionResult);
