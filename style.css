@@ -19,8 +19,8 @@
 
   --radius-lg: 18px;
   --radius: 14px;
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, .08);
-  --shadow-lg: 0 18px 48px rgba(0, 0, 0, .15);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.15);
 }
 
 /* Tipografía base */
@@ -30,7 +30,16 @@ body {
 }
 
 body {
-  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Poppins",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Ubuntu,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   background:
     radial-gradient(800px 400px at -10% -10%, #e8fff3 0%, transparent 70%),
     radial-gradient(900px 450px at 110% 110%, #eef7ff 0%, transparent 70%),
@@ -70,19 +79,17 @@ body {
 /* =========================
    HERO (ACTUALIZADO Y LIMPIO)
    ========================= */
-.hero{
+.hero {
   position: relative;
   min-height: 80vh;
   background: url("img/slider1.jpg") center/cover no-repeat;
   display: grid;
-  place-items: center;       /* antes: start center */
-  padding: 60px 0 40px;      /* quita padding-top negativo */
+  place-items: center; /* antes: start center */
+  padding: 60px 0 40px; /* quita padding-top negativo */
   text-align: center;
   color: #fff;
   overflow: hidden;
 }
-
-
 
 /* Overlay real (porque en el HTML ya tienes <div class="hero-overlay"></div>) */
 .hero-overlay {
@@ -90,9 +97,9 @@ body {
   inset: 0;
   background: linear-gradient(
     120deg,
-    rgba(0, 0, 0, 0.60) 0%,
+    rgba(0, 0, 0, 0.6) 0%,
     rgba(0, 0, 0, 0.35) 45%,
-    rgba(0, 0, 0, 0.60) 100%
+    rgba(0, 0, 0, 0.6) 100%
   );
   z-index: 1;
 }
@@ -151,7 +158,9 @@ body {
   line-height: 1.5;
   font-size: clamp(0.99rem, 1.6vw, 1.25rem);
   color: #f0f7f2;
-  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.6);
+  text-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.8),
+    0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .hero-benefits li::before {
@@ -170,8 +179,8 @@ body {
   color: #fff;
   font-size: clamp(2rem, 3vw, 1.5rem);
   text-align: center;
- margin-top: -5px;  
- font-weight: 700;
+  margin-top: -5px;
+  font-weight: 700;
   margin-bottom: 0;
   opacity: 0.95;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.65);
@@ -182,8 +191,12 @@ body {
 
 @keyframes bounce {
   0%,
-  100% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
 }
 
 /* =========================
@@ -247,7 +260,7 @@ body {
 .form-shell .dot {
   width: 10px;
   height: 10px;
-  background: rgba(255, 255, 255, .45);
+  background: rgba(255, 255, 255, 0.45);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -302,14 +315,17 @@ select {
   margin-bottom: 14px;
   font-size: 14px;
   color: var(--texto);
-  transition: box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 input:focus,
 select:focus {
   outline: 0;
   border-color: var(--verde);
-  box-shadow: 0 0 0 4px rgba(46, 125, 50, .15);
+  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
   background: #fff;
 }
 
@@ -324,7 +340,7 @@ select:required:valid {
 
 /* Campos especiales */
 #campoUbicacion {
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
 #campoUbicacion.oculto {
@@ -334,7 +350,10 @@ select:required:valid {
 /* Empresa: oculto por defecto, visible con .mostrar */
 #campoEmpresa {
   overflow: hidden;
-  transition: max-height .35s ease, opacity .25s ease, margin .2s ease;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    margin 0.2s ease;
   max-height: 0;
   opacity: 0;
   margin: 0;
@@ -395,9 +414,12 @@ button {
   padding: 14px 22px;
   border-radius: 16px;
   font-weight: 700;
-  box-shadow: 0 8px 18px rgba(67, 185, 127, .25);
+  box-shadow: 0 8px 18px rgba(67, 185, 127, 0.25);
   cursor: pointer;
-  transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
+  transition:
+    transform 0.06s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
 button:hover {
@@ -405,7 +427,7 @@ button:hover {
 }
 
 button:active {
-  transform: translateY(1px) scale(.995);
+  transform: translateY(1px) scale(0.995);
 }
 
 /* FONDO A ANCHO COMPLETO */
@@ -598,11 +620,11 @@ footer {
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(17, 24, 39, .55);
+  background: rgba(17, 24, 39, 0.55);
   backdrop-filter: blur(2px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity .25s ease;
+  transition: opacity 0.25s ease;
   z-index: 9999;
 }
 
@@ -616,10 +638,10 @@ footer {
   background: #fff;
   border: 1px solid var(--gris-200);
   border-radius: 18px;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, .18);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
   padding: 22px 22px 18px;
-  transform: translateY(10px) scale(.98);
-  transition: transform .2s ease;
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.2s ease;
   text-align: center;
 }
 
@@ -640,7 +662,7 @@ footer {
   padding: 12px 18px;
   border-radius: 14px;
   font-weight: 700;
-  box-shadow: 0 8px 18px rgba(67, 185, 127, .25);
+  box-shadow: 0 8px 18px rgba(67, 185, 127, 0.25);
   cursor: pointer;
 }
 
@@ -649,7 +671,61 @@ footer {
 }
 
 #btnCerrarAlerta:active {
-  transform: translateY(1px) scale(.995);
+  transform: translateY(1px) scale(0.995);
+}
+
+/* =========================
+   Loading Overlay (Procesando pago)
+   ========================= */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10000;
+}
+
+.loading-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.loading-spinner {
+  width: 56px;
+  height: 56px;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 20px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.loading-subtext {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 #comentarios-google {
@@ -734,7 +810,9 @@ footer {
   color: #fff;
   font-size: 1.6rem;
   margin: 0 10px;
-  transition: transform 0.3s, color 0.3s;
+  transition:
+    transform 0.3s,
+    color 0.3s;
 }
 
 .social-icons a:hover {
@@ -748,7 +826,6 @@ footer {
 
 /* ====== TABLET / PANTALLAS MEDIAS ====== */
 @media (max-width: 992px) {
-
   /* Encabezado */
   .top-bar .container {
     flex-direction: row;
@@ -816,7 +893,6 @@ footer {
 
 /* ====== MÓVIL ====== */
 @media (max-width: 768px) {
-
   /* Hero más alto y cómodo en móvil */
   .hero {
     min-height: 80vh;
@@ -960,7 +1036,6 @@ footer {
 
 /* ====== MÓVIL PEQUEÑO ====== */
 @media (max-width: 480px) {
-
   .hero-title {
     font-size: 1.3rem;
   }
@@ -1062,7 +1137,9 @@ footer {
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .review-card:hover {
@@ -1128,7 +1205,9 @@ footer {
   font-weight: 700;
   font-size: 1rem;
   box-shadow: 0 8px 18px rgba(67, 185, 127, 0.25);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .btn-ver-mas:hover {
@@ -1148,8 +1227,12 @@ footer {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive para reviews */
@@ -1214,7 +1297,9 @@ footer {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .video-item:hover {
@@ -1288,10 +1373,6 @@ center h2,
   margin-bottom: 20px !important;
 }
 
-
-
-
-
 /* =========================
    BLOQUE INCLUYE (debajo de INVERSIÓN)
    ========================= */
@@ -1342,9 +1423,6 @@ center h2,
   background: url("img/chulo.png") no-repeat center/contain;
 }
 
-
-
-
 /* =========================
    ANIMACIÓN PRECIO INVERSIÓN
    ========================= */
@@ -1359,29 +1437,33 @@ center h2,
 }
 
 @keyframes flotarPrecio {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
-
 /* Desktop / pantallas grandes */
-@media (min-width: 993px){
-  .hero{
+@media (min-width: 993px) {
+  .hero {
     place-items: center;
-    padding: 60px 0 40px;   /* puedes ajustar si quieres */
+    padding: 60px 0 40px; /* puedes ajustar si quieres */
   }
 
-  .hero-content{
-    margin-top: -80px;      /* 🔼 sube: prueba -40px / -60px / -80px */
-    transform: none;        /* evita choques con la animación */
+  .hero-content {
+    margin-top: -80px; /* 🔼 sube: prueba -40px / -60px / -80px */
+    transform: none; /* evita choques con la animación */
   }
 }
 
 /* Mantén tu comportamiento actual en tablet/móvil */
-@media (max-width: 992px){
-  .hero{
+@media (max-width: 992px) {
+  .hero {
     place-items: start center;
   }
 }
-

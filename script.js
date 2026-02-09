@@ -31,6 +31,44 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', onKey);
   }
 
+  // =================== LOADING OVERLAY ===================
+  let loadingOverlay = null;
+
+  function mostrarLoading(texto = 'Procesando...', subtexto = '') {
+    if (loadingOverlay) return;
+
+    loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
+      <div class="loading-spinner"></div>
+      <p class="loading-text">${texto}</p>
+      ${subtexto ? `<p class="loading-subtext">${subtexto}</p>` : ''}
+    `;
+
+    document.body.appendChild(loadingOverlay);
+    requestAnimationFrame(() => loadingOverlay.classList.add('visible'));
+  }
+
+  function actualizarLoading(texto, subtexto = '') {
+    if (!loadingOverlay) return;
+    const textEl = loadingOverlay.querySelector('.loading-text');
+    const subEl = loadingOverlay.querySelector('.loading-subtext');
+    if (textEl) textEl.textContent = texto;
+    if (subEl) subEl.textContent = subtexto;
+  }
+
+  function ocultarLoading() {
+    if (!loadingOverlay) return;
+    loadingOverlay.classList.remove('visible');
+    setTimeout(() => {
+      if (loadingOverlay) {
+        loadingOverlay.remove();
+        loadingOverlay = null;
+      }
+    }, 300);
+  }
+
+
   // =================== SLIDER (scope a .form-shell) ===================
   const shell = document.querySelector('.form-shell') || document;
   const left = shell ? shell.querySelector('.left') : null;
@@ -257,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // =================== CONFIG (EDITA SOLO ESTO) ===================
   // ✅ 1) URL /exec de tu Apps Script (la misma que responde PONG OK)
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7Mdgb7DGjdc1obKM5b6H7Sk4oNlSG3EJ-Sgb2EsrV6lmQnRQ5o6xj9oTsS6lhmqkS/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbzLtjo0aULz8Kp1Vnh_-IXzYxk5PObzJd07q65WsKNkYXcVEQprJZ_Q_7w5rdKojy/exec';
 
   // ✅ 2) IDs de tu comercio (estos pueden quedar en frontend)
   const merchantId = '83469';
@@ -309,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const amount = Number(valor).toFixed(2);
 
       // ========== PASO 1: Registrar inscripción (PRE-PAGO) ==========
+      mostrarLoading('Registrando inscripción...', 'Por favor espera un momento');
       console.log('[Inscripción] Enviando datos al servidor...');
 
       const inscripcionData = new URLSearchParams();
@@ -331,6 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const inscripcionResult = await inscripcionResponse.json();
 
       if (!inscripcionResult || !inscripcionResult.ok || !inscripcionResult.referenceCode) {
+        ocultarLoading();
         pagando = false;
         console.error('[Inscripción] Error:', inscripcionResult);
         mostrarAlerta('No se pudo registrar la inscripción. Por favor intenta de nuevo.');
@@ -341,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('[Inscripción] Registrada con referencia:', referenceCode);
 
       // ========== PASO 2: Pedir firma al Apps Script ==========
+      actualizarLoading('Preparando pago seguro...', 'Conectando con PayU');
       const signUrl =
         `${APPS_SCRIPT_URL}?signcheckout=1` +
         `&merchantId=${encodeURIComponent(merchantId)}` +
@@ -351,6 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const r = await fetch(signUrl, { method: 'GET' });
       const j = await r.json();
       if (!j || !j.signature) {
+        ocultarLoading();
         pagando = false;
         mostrarAlerta('No se pudo generar la firma. Revisa el Apps Script (signcheckout=1) y PAYU_API_KEY.');
         return;
@@ -360,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // ========== PASO 3: Preparar formulario PayU ==========
       const payuForm = document.getElementById('formPayu');
       if (!payuForm) {
+        ocultarLoading();
         pagando = false;
         mostrarAlerta('Error interno: formulario de pago no disponible.');
         return;
@@ -425,11 +468,13 @@ document.addEventListener('DOMContentLoaded', () => {
       ensureHiddenInput(payuForm, 'responseUrl', 'responseUrl').value = `${APPS_SCRIPT_URL}${qs}`;
       ensureHiddenInput(payuForm, 'confirmationUrl', 'confirmationUrl').value = `${APPS_SCRIPT_URL}${qs}`;
 
+      actualizarLoading('Redirigiendo a PayU...', 'Serás redirigido en un momento');
       btnPayu.disabled = true;
       payuForm.submit();
 
     } catch (err) {
       console.error('[PayU] Error en el envío:', err);
+      ocultarLoading();
       pagando = false;
       btnPayu && (btnPayu.disabled = false);
       mostrarAlerta('Ocurrió un error al preparar el pago. Revisa la consola para más detalles.');
