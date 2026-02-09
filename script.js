@@ -304,11 +304,43 @@ function detectVendedorFromURL() {
       const tipo = (tipoPersona?.value || '').toString().trim();
       const ubi  = (ubicacion?.value || 'N/A').toString().trim();
       const vendedor = (inputVendedor?.value || idVendedor || 'sin_vendedor').toString().trim() || 'sin_vendedor';
+      const empVal = (tipo === 'empresa') ? empresaRaw : '';
 
       const amount = Number(valor).toFixed(2);
-      const referenceCode = `CJI_${Date.now()}_${vendedor}`;
 
-      // ✅ Pedir firma al Apps Script (NO expone API key)
+      // ========== PASO 1: Registrar inscripción (PRE-PAGO) ==========
+      console.log('[Inscripción] Enviando datos al servidor...');
+      
+      const inscripcionData = new URLSearchParams();
+      inscripcionData.append('inscripcion', '1');
+      inscripcionData.append('nombre', personaRaw);
+      inscripcionData.append('correo', correoRaw);
+      inscripcionData.append('telefono', telefonoRaw);
+      inscripcionData.append('tipo', tipo);
+      inscripcionData.append('ubicacion', ubi);
+      inscripcionData.append('empresa', empVal);
+      inscripcionData.append('vendedor', vendedor);
+      inscripcionData.append('valor', amount);
+
+      const inscripcionResponse = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: inscripcionData.toString()
+      });
+
+      const inscripcionResult = await inscripcionResponse.json();
+      
+      if (!inscripcionResult || !inscripcionResult.ok || !inscripcionResult.referenceCode) {
+        pagando = false;
+        console.error('[Inscripción] Error:', inscripcionResult);
+        mostrarAlerta('No se pudo registrar la inscripción. Por favor intenta de nuevo.');
+        return;
+      }
+
+      const referenceCode = inscripcionResult.referenceCode;
+      console.log('[Inscripción] Registrada con referencia:', referenceCode);
+
+      // ========== PASO 2: Pedir firma al Apps Script ==========
       const signUrl =
         `${APPS_SCRIPT_URL}?signcheckout=1` +
         `&merchantId=${encodeURIComponent(merchantId)}` +
@@ -325,6 +357,7 @@ function detectVendedorFromURL() {
       }
       const signature = String(j.signature);
 
+      // ========== PASO 3: Preparar formulario PayU ==========
       const payuForm = document.getElementById('formPayu');
       if (!payuForm) {
         pagando = false;
@@ -338,7 +371,7 @@ function detectVendedorFromURL() {
 
       // Debug rápido (ver consola)
       console.log('PayU action:', PAYU_ACTION);
-      console.log('PayU test:', '0');
+      console.log('PayU referenceCode:', referenceCode);
 
       // Campos PayU
       ensureHiddenInput(payuForm, 'merchantId').value = merchantId;
@@ -359,7 +392,6 @@ function detectVendedorFromURL() {
       ensureHiddenInput(payuForm, 'extra1', 'extra1').value = limit255(tipo);
 
       // ✅ extra2 pack u/v/tel/emp
-      const empVal = (tipo === 'empresa') ? empresaRaw : '';
       const extra2Pack = `u=${ubi}|v=${vendedor}|tel=${telefonoRaw}|emp=${empVal}`;
       ensureHiddenInput(payuForm, 'extra2', 'extra2').value = limit255(extra2Pack);
 

@@ -1,16 +1,19 @@
 /**
  * PayU WebCheckout - Confirmation URL (POST) + Response URL (GET)
- * - Guarda en Google Sheets (SIN duplicar) por unique_key (reference_pol/transaction_id/reference_sale)
- * - Envía email SOLO cuando está APROBADO (state_pol=4) y la firma es válida
- * - Captura nombre desde extra3
- * - Captura teléfono/empresa/vendedor/ubicación desde:
- *      1) extra4/extra5 (si llegan)
- *      2) extra2 "u=...|v=...|tel=...|emp=..." (fallback garantizado)
- * - Vendedor en doPost: solo por extra2 (NO querystring)
+ * + NEW: Inscripción endpoint (POST ?inscripcion=1)
  *
- * EXTRA: Endpoint seguro para firmar WebCheckout:
- *   GET .../exec?signcheckout=1&merchantId=...&referenceCode=...&amount=...&currency=COP
- *   -> { "signature": "..." }
+ * FLUJO:
+ * 1. Frontend envía POST ?inscripcion=1 con datos del formulario
+ *    -> Se guarda en Sheet con estado_pago = PENDIENTE
+ *    -> Se envía email "Inscripción Recibida"
+ *    -> Retorna { ok: true, referenceCode }
+ *
+ * 2. Frontend solicita firma y redirige a PayU
+ *
+ * 3. PayU envía POST de confirmación
+ *    -> Se ACTUALIZA la fila existente (por reference_sale)
+ *    -> estado_pago = APROBADO/RECHAZADO según state_pol
+ *    -> Se envía email "Pago Confirmado" (solo si aprobado)
  */
 
 const CONFIG = {
@@ -96,6 +99,7 @@ function ensureHeader_(sh) {
     "ubicacion",
     "vendedor",
     "correo_final",
+    "estado_pago", // NEW: PENDIENTE, APROBADO, RECHAZADO
   ];
 
   if (sh.getLastRow() === 0) {
@@ -117,7 +121,21 @@ function isValidEmail_(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 }
 
-/** ====== ANTI-DUPLICADOS EN SHEET (upsert por unique_key en col B) ====== */
+/** ====== BUSCAR FILA POR reference_sale (col C) ====== */
+function findRowByReferenceSale_(sh, referenceSale) {
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return null;
+
+  const refRange = sh.getRange(2, 3, lastRow - 1, 1).getValues(); // col C = reference_sale
+  for (let i = 0; i < refRange.length; i++) {
+    if (String(refRange[i][0]) === String(referenceSale)) {
+      return i + 2; // row number (1-indexed)
+    }
+  }
+  return null;
+}
+
+/** ====== UPSERT por unique_key en col B ====== */
 function upsertByUniqueKey_(sh, uniqueKey, valuesArray) {
   const lastRow = sh.getLastRow();
 
@@ -150,6 +168,21 @@ function alreadyProcessedApproved_(referenceSale) {
 function markProcessedApproved_(referenceSale) {
   PropertiesService.getScriptProperties().setProperty(
     "APPROVED_" + referenceSale,
+    "1",
+  );
+}
+
+/** ====== Evitar correos duplicados de inscripción ====== */
+function alreadySentInscripcion_(referenceSale) {
+  return (
+    PropertiesService.getScriptProperties().getProperty(
+      "INSCRIPCION_" + referenceSale,
+    ) === "1"
+  );
+}
+function markSentInscripcion_(referenceSale) {
+  PropertiesService.getScriptProperties().setProperty(
+    "INSCRIPCION_" + referenceSale,
     "1",
   );
 }
@@ -194,16 +227,52 @@ function parseExtra2Pack_(extra2raw) {
   return out;
 }
 
-function sendEmails_(data) {
+/** ===================== EMAIL: Inscripción Recibida ===================== */
+function sendInscripcionEmail_(data) {
   const admin = CONFIG.ADMIN_EMAIL;
   const client = data.correo_final;
 
-  const subjectAdmin = `Pago aprobado - Ref: ${data.reference_sale}`;
+  const subjectAdmin = `📋 Nueva inscripción - Ref: ${data.reference_sale}`;
+  const subjectClient = `📋 Inscripción recibida - Ref: ${data.reference_sale}`;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;line-height:1.5">
+      <h2>📋 Inscripción Recibida</h2>
+      <p><b>Referencia:</b> ${data.reference_sale || "-"}</p>
+      <p><b>Valor:</b> ${data.value || "-"} COP</p>
+      <p><b>Estado del pago:</b> <span style="color:#e67e22;font-weight:bold">PENDIENTE</span></p>
+      <hr>
+      <h3>Datos del cliente</h3>
+      <p><b>Nombre:</b> ${data.nombre || "-"}</p>
+      <p><b>Correo:</b> ${client || "-"}</p>
+      <p><b>Teléfono:</b> ${data.telefono || "-"}</p>
+      <p><b>Empresa:</b> ${data.empresa || "-"}</p>
+      <p><b>Tipo:</b> ${data.tipo || "-"}</p>
+      <p><b>Ubicación:</b> ${data.ubicacion || "-"}</p>
+      <p><b>Vendedor:</b> ${data.vendedor || "-"}</p>
+      <hr>
+      <p style="color:#666">El pago aún no ha sido confirmado. Recibirás otro correo cuando el pago sea procesado.</p>
+    </div>
+  `;
+
+  MailApp.sendEmail({ to: admin, subject: subjectAdmin, htmlBody: html });
+
+  if (isValidEmail_(client)) {
+    MailApp.sendEmail({ to: client, subject: subjectClient, htmlBody: html });
+  }
+}
+
+/** ===================== EMAIL: Pago Aprobado ===================== */
+function sendPaymentApprovedEmail_(data) {
+  const admin = CONFIG.ADMIN_EMAIL;
+  const client = data.correo_final;
+
+  const subjectAdmin = `✅ Pago aprobado - Ref: ${data.reference_sale}`;
   const subjectClient = `✅ Confirmación de tu pago - Ref: ${data.reference_sale}`;
 
   const html = `
     <div style="font-family:Arial,sans-serif;line-height:1.5">
-      <h2>✅ Pago aprobado</h2>
+      <h2>✅ Pago Aprobado</h2>
       <p><b>Referencia:</b> ${data.reference_sale || "-"}</p>
       <p><b>Valor:</b> ${data.value || "-"} ${data.currency || ""}</p>
       <p><b>Estado (state_pol):</b> ${data.state_pol || "-"}</p>
@@ -228,7 +297,7 @@ function sendEmails_(data) {
   }
 }
 
-/** ===================== PAYU CONFIRMATION (POST) ===================== */
+/** ===================== doPost: INSCRIPCIÓN + PAYU CONFIRMATION ===================== */
 function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(25000);
@@ -236,153 +305,269 @@ function doPost(e) {
   try {
     const p = e && e.parameter ? e.parameter : {};
 
-    const merchant_id = (p.merchant_id || p.merchantId || "").toString().trim();
-    const reference_sale = (p.reference_sale || "").toString().trim();
-    const value = (p.value || "").toString().trim();
-    const currency = (p.currency || "").toString().trim();
-    const state_pol = (p.state_pol || "").toString().trim();
-    const receivedSign = (p.sign || p.signature || "")
-      .toString()
-      .trim()
-      .toLowerCase();
-
-    const sh = getOrCreateSheet_();
-
-    // RAW extras
-    const extra1 = (p.extra1 || "").toString().trim();
-    const extra2 = (p.extra2 || "").toString().trim();
-    const extra3 = (p.extra3 || "").toString().trim();
-    const extra4 = (p.extra4 || "").toString().trim();
-    const extra5 = (p.extra5 || "").toString().trim();
-
-    const pack = parseExtra2Pack_(extra2);
-
-    const tipo = extra1;
-    const nombre = extra3;
-
-    const telefono = extra4 || pack.telefono || "";
-    const empresa = extra5 || pack.empresa || "";
-
-    const ubicacion = pack.ubicacion || extra2 || "";
-    const vendedor = pack.vendedor || "";
-
-    // Firma confirmation
-    let signOk = false;
-    let expectedSign = "";
-
-    if (
-      merchant_id &&
-      reference_sale &&
-      value &&
-      currency &&
-      state_pol &&
-      receivedSign
-    ) {
-      const apiKey = getApiKey_();
-      const newValue = formatNewValueConfirmation_(value);
-      const rawSign = `${apiKey}~${merchant_id}~${reference_sale}~${newValue}~${currency}~${state_pol}`;
-      expectedSign = md5Hex_(rawSign).toLowerCase();
-      signOk = expectedSign === receivedSign;
+    // ========== NEW: INSCRIPCIÓN ENDPOINT ==========
+    if (p.inscripcion === "1") {
+      return handleInscripcion_(p);
     }
 
-    const correoFinal =
-      (p.email_buyer || "").toString().trim() ||
-      (p.buyerEmail || "").toString().trim() ||
-      "";
+    // ========== EXISTING: PAYU CONFIRMATION ==========
+    return handlePayuConfirmation_(p);
+  } catch (err) {
+    console.error(err);
+    return ContentService.createTextOutput(
+      JSON.stringify({ error: err.message }),
+    ).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
 
-    const reference_pol = (p.reference_pol || "").toString().trim();
-    const transaction_id = (p.transaction_id || "").toString().trim();
+/** ========== HANDLER: Inscripción (PRE-PAGO) ========== */
+function handleInscripcion_(p) {
+  const sh = getOrCreateSheet_();
+
+  // Extract form data
+  const nombre = (p.nombre || "").toString().trim();
+  const correo = (p.correo || "").toString().trim();
+  const telefono = (p.telefono || "").toString().trim();
+  const tipo = (p.tipo || "").toString().trim();
+  const ubicacion = (p.ubicacion || "").toString().trim();
+  const empresa = (p.empresa || "").toString().trim();
+  const vendedor = (p.vendedor || "sin_vendedor").toString().trim();
+  const valor = (p.valor || "").toString().trim();
+
+  // Generate unique reference
+  const referenceCode = `CJI_${Date.now()}_${vendedor}`;
+
+  // Build extra2 pack for consistency
+  const extra2Pack = `u=${ubicacion}|v=${vendedor}|tel=${telefono}|emp=${empresa}`;
+
+  const rowData = {
+    timestamp: new Date(),
+    unique_key: referenceCode,
+    reference_sale: referenceCode,
+    state_pol: "",
+    response_message_pol: "",
+    value: valor,
+    currency: "COP",
+    email_buyer: correo,
+    phone: telefono,
+    extra1: tipo,
+    extra2: extra2Pack,
+    extra3: nombre,
+    extra4: telefono,
+    extra5: empresa,
+    transaction_id: "",
+    reference_pol: "",
+    sign_ok: "",
+    expected_sign: "",
+    received_sign: "",
+    nombre: nombre,
+    telefono: telefono,
+    empresa: empresa,
+    tipo: tipo,
+    ubicacion: ubicacion,
+    vendedor: vendedor,
+    correo_final: correo,
+    estado_pago: "PENDIENTE",
+  };
+
+  const row = [
+    rowData.timestamp,
+    rowData.unique_key,
+    rowData.reference_sale,
+    rowData.state_pol,
+    rowData.response_message_pol,
+    rowData.value,
+    rowData.currency,
+    rowData.email_buyer,
+    rowData.phone,
+    rowData.extra1,
+    rowData.extra2,
+    rowData.extra3,
+    rowData.extra4,
+    rowData.extra5,
+    rowData.transaction_id,
+    rowData.reference_pol,
+    rowData.sign_ok,
+    rowData.expected_sign,
+    rowData.received_sign,
+    rowData.nombre,
+    rowData.telefono,
+    rowData.empresa,
+    rowData.tipo,
+    rowData.ubicacion,
+    rowData.vendedor,
+    rowData.correo_final,
+    rowData.estado_pago,
+  ];
+
+  // Insert new row
+  sh.appendRow(row);
+
+  // Send inscription email (only once)
+  if (!alreadySentInscripcion_(referenceCode)) {
+    markSentInscripcion_(referenceCode);
+    sendInscripcionEmail_(rowData);
+  }
+
+  return ContentService.createTextOutput(
+    JSON.stringify({ ok: true, referenceCode: referenceCode }),
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
+/** ========== HANDLER: PayU Confirmation ========== */
+function handlePayuConfirmation_(p) {
+  const sh = getOrCreateSheet_();
+
+  const merchant_id = (p.merchant_id || p.merchantId || "").toString().trim();
+  const reference_sale = (p.reference_sale || "").toString().trim();
+  const value = (p.value || "").toString().trim();
+  const currency = (p.currency || "").toString().trim();
+  const state_pol = (p.state_pol || "").toString().trim();
+  const receivedSign = (p.sign || p.signature || "")
+    .toString()
+    .trim()
+    .toLowerCase();
+
+  // RAW extras
+  const extra1 = (p.extra1 || "").toString().trim();
+  const extra2 = (p.extra2 || "").toString().trim();
+  const extra3 = (p.extra3 || "").toString().trim();
+  const extra4 = (p.extra4 || "").toString().trim();
+  const extra5 = (p.extra5 || "").toString().trim();
+
+  const pack = parseExtra2Pack_(extra2);
+
+  const tipo = extra1;
+  const nombre = extra3;
+
+  const telefono = extra4 || pack.telefono || "";
+  const empresa = extra5 || pack.empresa || "";
+
+  const ubicacion = pack.ubicacion || "";
+  const vendedor = pack.vendedor || "";
+
+  // Signature verification
+  let signOk = false;
+  let expectedSign = "";
+
+  if (
+    merchant_id &&
+    reference_sale &&
+    value &&
+    currency &&
+    state_pol &&
+    receivedSign
+  ) {
+    const apiKey = getApiKey_();
+    const newValue = formatNewValueConfirmation_(value);
+    const rawSign = `${apiKey}~${merchant_id}~${reference_sale}~${newValue}~${currency}~${state_pol}`;
+    expectedSign = md5Hex_(rawSign).toLowerCase();
+    signOk = expectedSign === receivedSign;
+  }
+
+  const correoFinal =
+    (p.email_buyer || "").toString().trim() ||
+    (p.buyerEmail || "").toString().trim() ||
+    "";
+
+  const reference_pol = (p.reference_pol || "").toString().trim();
+  const transaction_id = (p.transaction_id || "").toString().trim();
+
+  // Determine estado_pago based on state_pol
+  let estadoPago = "PENDIENTE_VALIDACION";
+  if (state_pol === "4") {
+    estadoPago = "APROBADO";
+  } else if (state_pol === "5" || state_pol === "6") {
+    estadoPago = "RECHAZADO";
+  }
+
+  // Try to find existing row by reference_sale
+  const existingRow = findRowByReferenceSale_(sh, reference_sale);
+
+  if (existingRow) {
+    // UPDATE existing row - update specific columns
+    const numCols = 27; // total columns
+    const existingData = sh.getRange(existingRow, 1, 1, numCols).getValues()[0];
+
+    // Update only payment-related fields, keep original inscription data
+    existingData[0] = new Date(); // timestamp update
+    existingData[3] = state_pol; // state_pol
+    existingData[4] = (p.response_message_pol || "").toString(); // response_message_pol
+    existingData[14] = transaction_id; // transaction_id
+    existingData[15] = reference_pol; // reference_pol
+    existingData[16] = signOk ? "YES" : "NO"; // sign_ok
+    existingData[17] = expectedSign; // expected_sign
+    existingData[18] = receivedSign; // received_sign
+    existingData[26] = estadoPago; // estado_pago
+
+    sh.getRange(existingRow, 1, 1, numCols).setValues([existingData]);
+  } else {
+    // INSERT new row (fallback if inscription wasn't recorded)
     const uniqueKey =
       reference_pol ||
       transaction_id ||
       reference_sale ||
       "NOREF_" + Date.now();
 
-    const rowData = {
-      timestamp: new Date(),
-      unique_key: uniqueKey,
-
+    const row = [
+      new Date(),
+      uniqueKey,
       reference_sale,
       state_pol,
-      response_message_pol: (p.response_message_pol || "").toString(),
-
+      (p.response_message_pol || "").toString(),
       value,
       currency,
-      email_buyer: (p.email_buyer || "").toString(),
-      phone: (p.phone || "").toString(),
-
+      (p.email_buyer || "").toString(),
+      (p.phone || "").toString(),
       extra1,
       extra2,
       extra3,
       extra4,
       extra5,
-
       transaction_id,
       reference_pol,
-
-      sign_ok: signOk ? "YES" : "NO",
-      expected_sign: expectedSign,
-      received_sign: receivedSign,
-
+      signOk ? "YES" : "NO",
+      expectedSign,
+      receivedSign,
       nombre,
       telefono,
       empresa,
-
       tipo,
       ubicacion,
       vendedor,
-      correo_final: correoFinal,
-    };
-
-    const row = [
-      rowData.timestamp,
-      rowData.unique_key,
-      rowData.reference_sale,
-      rowData.state_pol,
-      rowData.response_message_pol,
-      rowData.value,
-      rowData.currency,
-      rowData.email_buyer,
-      rowData.phone,
-      rowData.extra1,
-      rowData.extra2,
-      rowData.extra3,
-      rowData.extra4,
-      rowData.extra5,
-      rowData.transaction_id,
-      rowData.reference_pol,
-      rowData.sign_ok,
-      rowData.expected_sign,
-      rowData.received_sign,
-      rowData.nombre,
-      rowData.telefono,
-      rowData.empresa,
-      rowData.tipo,
-      rowData.ubicacion,
-      rowData.vendedor,
-      rowData.correo_final,
+      correoFinal,
+      estadoPago,
     ];
 
     upsertByUniqueKey_(sh, uniqueKey, row);
-
-    if (signOk && state_pol === "4") {
-      if (!alreadyProcessedApproved_(reference_sale)) {
-        markProcessedApproved_(reference_sale);
-        sendEmails_(rowData);
-      }
-    }
-
-    return ContentService.createTextOutput("OK").setMimeType(
-      ContentService.MimeType.TEXT,
-    );
-  } catch (err) {
-    console.error(err);
-    return ContentService.createTextOutput("ERROR: " + err.message).setMimeType(
-      ContentService.MimeType.TEXT,
-    );
-  } finally {
-    lock.releaseLock();
   }
+
+  // Send payment approved email (only if approved and not already sent)
+  if (signOk && state_pol === "4") {
+    if (!alreadyProcessedApproved_(reference_sale)) {
+      markProcessedApproved_(reference_sale);
+      sendPaymentApprovedEmail_({
+        reference_sale,
+        value,
+        currency,
+        state_pol,
+        nombre,
+        correo_final: correoFinal,
+        telefono,
+        empresa,
+        tipo,
+        ubicacion,
+        vendedor,
+        phone: (p.phone || "").toString(),
+      });
+    }
+  }
+
+  return ContentService.createTextOutput("OK").setMimeType(
+    ContentService.MimeType.TEXT,
+  );
 }
 
 /** ===================== RESPONSE URL (GET) + UTIL ENDPOINTS ===================== */
@@ -407,7 +592,7 @@ function doGet(e) {
     const apiKey = getApiKey_();
     const merchantId = String(p.merchantId || "").trim();
     const referenceCode = String(p.referenceCode || "").trim();
-    const amount = String(p.amount || "").trim(); // debe venir tipo "320813.00"
+    const amount = String(p.amount || "").trim();
     const currency = String(p.currency || "COP").trim();
 
     if (!merchantId || !referenceCode || !amount || !currency) {
