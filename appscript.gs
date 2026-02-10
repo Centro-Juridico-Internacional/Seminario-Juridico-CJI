@@ -18,7 +18,9 @@
 
 const CONFIG = {
   ADMIN_EMAIL:
-    "desarrollo@centrojuridicointernacional.com,coordinacion2@centrojuridicointernacional.com",
+    "desarrollo@centrojuridicointernacional.com,coordinacion2@centrojuridicointernacional.com, gercomercial@centrojuridicointernacional.com",
+  ACOPI_EMAIL:
+    "desarrollo@centrojuridicointernacional.com,comunicaciones@centrojuridicointernacional.com",
   SHEET_ID: "1ElkQNY9smNg1GJ-51qK0gfFB5FnjyM1UjYffWWIlkPg",
   SHEET_NAME: "PagosPayU",
   API_KEY_PROP: "PAYU_API_KEY",
@@ -229,7 +231,9 @@ function parseExtra2Pack_(extra2raw) {
 
 /** ===================== EMAIL: Inscripción Recibida ===================== */
 function sendInscripcionEmail_(data) {
-  const admin = CONFIG.ADMIN_EMAIL;
+  // Select email list based on vendor
+  const admin =
+    data.vendedor === "acopi" ? CONFIG.ACOPI_EMAIL : CONFIG.ADMIN_EMAIL;
   const client = data.correo_final;
 
   const subjectAdmin = `📋 Nueva inscripción - Ref: ${data.reference_sale}`;

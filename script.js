@@ -190,12 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (precio !== null) {
-      precioTexto.textContent = `Precio: $${precio.toLocaleString('es-CO')}`;
-      btnPayu.textContent = 'Separar mi cupo';
-      btnPayu.dataset.valor = String(precio);
+      if (detectVendedorFromURL() === 'acopi') {
+        precioTexto.textContent = ''; // Ocultar precio
+        btnPayu.textContent = 'Inscribirme (Convenio Acopi)';
+        btnPayu.dataset.valor = '0'; // Valor simbólico
+      } else {
+        precioTexto.textContent = ''; // Ocultar precio GLOBALMENTE
+        btnPayu.textContent = 'Separar mi cupo';
+        btnPayu.dataset.valor = String(precio);
+      }
     } else {
       precioTexto.textContent = '';
-      btnPayu.textContent = 'Separar mi cupo';
+      btnPayu.textContent = detectVendedorFromURL() === 'acopi' ? 'Inscribirme (Convenio Acopi)' : 'Separar mi cupo';
       btnPayu.dataset.valor = '';
     }
   }
@@ -228,6 +234,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const idVendedor = detectVendedorFromURL();
   const inputVendedor = document.getElementById('vendedor');
   if (inputVendedor) inputVendedor.value = idVendedor;
+
+  // ========== RESTRICCIÓN ACOPI: SOLO EMPRESA ==========
+  if (idVendedor === 'acopi') {
+    const selectTipo = document.getElementById('tipoPersona');
+    if (selectTipo) {
+      // Ocultar opción "Persona natural"
+      const optNatural = selectTipo.querySelector('option[value="natural"]');
+      if (optNatural) {
+        optNatural.style.display = 'none'; // Visualmente oculto
+        optNatural.disabled = true;        // Deshabilitado por seguridad
+      }
+
+      // Auto-seleccionar "Empresa"
+      selectTipo.value = 'empresa';
+
+      // Disparar evento change para mostrar campos de empresa
+      selectTipo.dispatchEvent(new Event('change'));
+
+      // Opcional: Deshabilitar el select para que no puedan intentar cambiarlo
+      // selectTipo.style.pointerEvents = 'none'; 
+      // selectTipo.style.background = '#f0f0f0';
+    }
+  }
 
   // =================== HELPERS PAYU ===================
   function ensureHiddenInput(form, name, idOpt) {
@@ -295,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // =================== CONFIG (EDITA SOLO ESTO) ===================
   // ✅ 1) URL /exec de tu Apps Script (la misma que responde PONG OK)
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbzLtjo0aULz8Kp1Vnh_-IXzYxk5PObzJd07q65WsKNkYXcVEQprJZ_Q_7w5rdKojy/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsYth9Sn-cMEOpeYH9248h_QULCf0bVEOrbaSICJHDJjjFzXAqEmscUiWx-ikUv0sm/exec';
 
   // ✅ 2) IDs de tu comercio (estos pueden quedar en frontend)
   const merchantId = '83469';
@@ -379,6 +408,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const referenceCode = inscripcionResult.referenceCode;
       console.log('[Inscripción] Registrada con referencia:', referenceCode);
+
+      // ========== CASO ESPECIAL ACOPY: NO REDIRIGIR A PAYU ==========
+      if (vendedor === 'acopi') {
+        ocultarLoading();
+        pagando = false;
+        mostrarAlerta('¡Inscripción exitosa bajo convenio Acopi! Revisa tu correo.');
+
+        // Opcional: limpiar formulario
+        form.reset();
+        actualizarPrecio();
+        return; // DETENER FLUJO AQUÍ
+      }
 
       // ========== PASO 2: Pedir firma al Apps Script ==========
       actualizarLoading('Preparando pago seguro...', 'Conectando con PayU');
