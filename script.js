@@ -31,6 +31,44 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', onKey);
   }
 
+  // =================== LOADING OVERLAY ===================
+  let loadingOverlay = null;
+
+  function mostrarLoading(texto = 'Procesando...', subtexto = '') {
+    if (loadingOverlay) return;
+
+    loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
+      <div class="loading-spinner"></div>
+      <p class="loading-text">${texto}</p>
+      ${subtexto ? `<p class="loading-subtext">${subtexto}</p>` : ''}
+    `;
+
+    document.body.appendChild(loadingOverlay);
+    requestAnimationFrame(() => loadingOverlay.classList.add('visible'));
+  }
+
+  function actualizarLoading(texto, subtexto = '') {
+    if (!loadingOverlay) return;
+    const textEl = loadingOverlay.querySelector('.loading-text');
+    const subEl = loadingOverlay.querySelector('.loading-subtext');
+    if (textEl) textEl.textContent = texto;
+    if (subEl) subEl.textContent = subtexto;
+  }
+
+  function ocultarLoading() {
+    if (!loadingOverlay) return;
+    loadingOverlay.classList.remove('visible');
+    setTimeout(() => {
+      if (loadingOverlay) {
+        loadingOverlay.remove();
+        loadingOverlay = null;
+      }
+    }, 300);
+  }
+
+
   // =================== SLIDER (scope a .form-shell) ===================
   const shell = document.querySelector('.form-shell') || document;
   const left = shell ? shell.querySelector('.left') : null;
@@ -108,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ✅ NUEVOS PRECIOS
     const PRECIO_NATURAL = 356346;
     const PRECIO_BOGOTA = 320813;
-    const PRECIO_FUERA  = 323406;
+    const PRECIO_FUERA = 323406;
 
     if (tipoPersona && tipoPersona.value === 'natural') {
       if (campoUbicacion) campoUbicacion.classList.add('oculto');
@@ -152,12 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (precio !== null) {
-      precioTexto.textContent = `Precio: $${precio.toLocaleString('es-CO')}`;
-      btnPayu.textContent = 'Separar mi cupo';
-      btnPayu.dataset.valor = String(precio);
+      if (detectVendedorFromURL() === 'acopi') {
+        precioTexto.textContent = ''; // Ocultar precio
+        btnPayu.textContent = 'Inscribirme (Convenio Acopi)';
+        btnPayu.dataset.valor = '0'; // Valor simbólico
+      } else {
+        precioTexto.textContent = ''; // Ocultar precio GLOBALMENTE
+        btnPayu.textContent = 'Separar mi cupo';
+        btnPayu.dataset.valor = String(precio);
+      }
     } else {
       precioTexto.textContent = '';
-      btnPayu.textContent = 'Separar mi cupo';
+      btnPayu.textContent = detectVendedorFromURL() === 'acopi' ? 'Inscribirme (Convenio Acopi)' : 'Separar mi cupo';
       btnPayu.dataset.valor = '';
     }
   }
@@ -180,16 +224,39 @@ document.addEventListener('DOMContentLoaded', () => {
   actualizarPrecio();
 
   // =================== VENDEDOR POR URL ===================
-function detectVendedorFromURL() {
-  const params = new URLSearchParams(window.location.search || '');
-  const v = (params.get('adviser') || '').trim();
-  return v || 'sin_vendedor';
-}
+  function detectVendedorFromURL() {
+    const params = new URLSearchParams(window.location.search || '');
+    const v = (params.get('adviser') || '').trim();
+    return v || 'sin_vendedor';
+  }
 
 
   const idVendedor = detectVendedorFromURL();
   const inputVendedor = document.getElementById('vendedor');
   if (inputVendedor) inputVendedor.value = idVendedor;
+
+  // ========== RESTRICCIÓN ACOPI: SOLO EMPRESA ==========
+  if (idVendedor === 'acopi') {
+    const selectTipo = document.getElementById('tipoPersona');
+    if (selectTipo) {
+      // Ocultar opción "Persona natural"
+      const optNatural = selectTipo.querySelector('option[value="natural"]');
+      if (optNatural) {
+        optNatural.style.display = 'none'; // Visualmente oculto
+        optNatural.disabled = true;        // Deshabilitado por seguridad
+      }
+
+      // Auto-seleccionar "Empresa"
+      selectTipo.value = 'empresa';
+
+      // Disparar evento change para mostrar campos de empresa
+      selectTipo.dispatchEvent(new Event('change'));
+
+      // Opcional: Deshabilitar el select para que no puedan intentar cambiarlo
+      // selectTipo.style.pointerEvents = 'none'; 
+      // selectTipo.style.background = '#f0f0f0';
+    }
+  }
 
   // =================== HELPERS PAYU ===================
   function ensureHiddenInput(form, name, idOpt) {
@@ -257,12 +324,12 @@ function detectVendedorFromURL() {
 
   // =================== CONFIG (EDITA SOLO ESTO) ===================
   // ✅ 1) URL /exec de tu Apps Script (la misma que responde PONG OK)
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOOadxk89t-hV2Q2NRa46Ei7hU7GmCepo7XaoEo8TSaG97CNOBZl8ZU_ODWm_yiY4V/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsYth9Sn-cMEOpeYH9248h_QULCf0bVEOrbaSICJHDJjjFzXAqEmscUiWx-ikUv0sm/exec';
 
   // ✅ 2) IDs de tu comercio (estos pueden quedar en frontend)
   const merchantId = '83469';
-  const accountId  = '87502';
-  const currency   = 'COP';
+  const accountId = '87502';
+  const currency = 'COP';
 
   // ✅ 3) Endpoint de producción PayU
   const PAYU_ACTION = 'https://checkout.payulatam.com/ppp-web-gateway-payu/';
@@ -297,18 +364,65 @@ function detectVendedorFromURL() {
       const formData = new FormData(form);
 
       const empresaRaw = (formData.get('empresa') || '').toString().trim();
-      const correoRaw  = (formData.get('correo') || '').toString().trim();
+      const correoRaw = (formData.get('correo') || '').toString().trim();
       const telefonoRaw = (formData.get('telefono') || '').toString().trim();
-      const personaRaw  = (formData.get('nombre') || '').toString().trim();
+      const personaRaw = (formData.get('nombre') || '').toString().trim();
 
       const tipo = (tipoPersona?.value || '').toString().trim();
-      const ubi  = (ubicacion?.value || 'N/A').toString().trim();
+      const ubi = (ubicacion?.value || 'N/A').toString().trim();
       const vendedor = (inputVendedor?.value || idVendedor || 'sin_vendedor').toString().trim() || 'sin_vendedor';
+      const empVal = (tipo === 'empresa') ? empresaRaw : '';
 
       const amount = Number(valor).toFixed(2);
-      const referenceCode = `CJI_${Date.now()}_${vendedor}`;
 
-      // ✅ Pedir firma al Apps Script (NO expone API key)
+      // ========== PASO 1: Registrar inscripción (PRE-PAGO) ==========
+      mostrarLoading('Registrando inscripción...', 'Por favor espera un momento');
+      console.log('[Inscripción] Enviando datos al servidor...');
+
+      const inscripcionData = new URLSearchParams();
+      inscripcionData.append('inscripcion', '1');
+      inscripcionData.append('nombre', personaRaw);
+      inscripcionData.append('correo', correoRaw);
+      inscripcionData.append('telefono', telefonoRaw);
+      inscripcionData.append('tipo', tipo);
+      inscripcionData.append('ubicacion', ubi);
+      inscripcionData.append('empresa', empVal);
+      inscripcionData.append('vendedor', vendedor);
+      inscripcionData.append('valor', amount);
+
+      const inscripcionResponse = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: inscripcionData.toString()
+      });
+
+      const inscripcionResult = await inscripcionResponse.json();
+
+      if (!inscripcionResult || !inscripcionResult.ok || !inscripcionResult.referenceCode) {
+        ocultarLoading();
+        pagando = false;
+        console.error('[Inscripción] Error:', inscripcionResult);
+        mostrarAlerta('No se pudo registrar la inscripción. Por favor intenta de nuevo.');
+        return;
+      }
+
+      const referenceCode = inscripcionResult.referenceCode;
+      console.log('[Inscripción] Registrada con referencia:', referenceCode);
+
+      // ========== CASO ESPECIAL ACOPY: NO REDIRIGIR A PAYU ==========
+      if (vendedor === 'acopi') {
+        ocultarLoading();
+        pagando = false;
+        mostrarAlerta('¡Inscripción exitosa bajo convenio Acopi! Revisa tu correo.');
+
+        // Opcional: limpiar formulario
+        form.reset();
+        actualizarPrecio();
+        return; // DETENER FLUJO AQUÍ
+      }
+
+      // ========== PASO 2: Pedir firma al Apps Script ==========
+      actualizarLoading('Preparando pago seguro...', 'Conectando con PayU');
       const signUrl =
         `${APPS_SCRIPT_URL}?signcheckout=1` +
         `&merchantId=${encodeURIComponent(merchantId)}` +
@@ -319,14 +433,17 @@ function detectVendedorFromURL() {
       const r = await fetch(signUrl, { method: 'GET' });
       const j = await r.json();
       if (!j || !j.signature) {
+        ocultarLoading();
         pagando = false;
         mostrarAlerta('No se pudo generar la firma. Revisa el Apps Script (signcheckout=1) y PAYU_API_KEY.');
         return;
       }
       const signature = String(j.signature);
 
+      // ========== PASO 3: Preparar formulario PayU ==========
       const payuForm = document.getElementById('formPayu');
       if (!payuForm) {
+        ocultarLoading();
         pagando = false;
         mostrarAlerta('Error interno: formulario de pago no disponible.');
         return;
@@ -338,7 +455,7 @@ function detectVendedorFromURL() {
 
       // Debug rápido (ver consola)
       console.log('PayU action:', PAYU_ACTION);
-      console.log('PayU test:', '0');
+      console.log('PayU referenceCode:', referenceCode);
 
       // Campos PayU
       ensureHiddenInput(payuForm, 'merchantId').value = merchantId;
@@ -359,7 +476,6 @@ function detectVendedorFromURL() {
       ensureHiddenInput(payuForm, 'extra1', 'extra1').value = limit255(tipo);
 
       // ✅ extra2 pack u/v/tel/emp
-      const empVal = (tipo === 'empresa') ? empresaRaw : '';
       const extra2Pack = `u=${ubi}|v=${vendedor}|tel=${telefonoRaw}|emp=${empVal}`;
       ensureHiddenInput(payuForm, 'extra2', 'extra2').value = limit255(extra2Pack);
 
@@ -393,11 +509,13 @@ function detectVendedorFromURL() {
       ensureHiddenInput(payuForm, 'responseUrl', 'responseUrl').value = `${APPS_SCRIPT_URL}${qs}`;
       ensureHiddenInput(payuForm, 'confirmationUrl', 'confirmationUrl').value = `${APPS_SCRIPT_URL}${qs}`;
 
+      actualizarLoading('Redirigiendo a PayU...', 'Serás redirigido en un momento');
       btnPayu.disabled = true;
       payuForm.submit();
 
     } catch (err) {
       console.error('[PayU] Error en el envío:', err);
+      ocultarLoading();
       pagando = false;
       btnPayu && (btnPayu.disabled = false);
       mostrarAlerta('Ocurrió un error al preparar el pago. Revisa la consola para más detalles.');
